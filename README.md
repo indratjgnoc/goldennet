@@ -1,28 +1,42 @@
-Golden Net
+🌐 Golden Net
 
-Golden Net adalah aplikasi web untuk menyediakan informasi dan layanan terkait jaringan internet, termasuk fitur pengecekan ketersediaan coverage berdasarkan area dan alamat.
+Golden Net — Internet Solution for Everyone
 
-🚀 Tech Stack
+Golden Net adalah aplikasi web untuk mendukung layanan jaringan internet, dengan fokus pada pengalaman pengguna yang sederhana, cepat, dan informatif.
 
-Project ini dibangun menggunakan:
+Aplikasi ini menyediakan fitur pengecekan ketersediaan coverage jaringan berdasarkan area dan alamat pelanggan.
 
-Next.js — Framework React untuk pengembangan aplikasi web.
-TypeScript — Untuk type safety dan maintainability.
-Material UI (MUI) — Library komponen UI untuk membangun interface yang responsif.
-Formik — Untuk pengelolaan form dan proses submit.
-Yup — Untuk validasi data pada form.
-Swagger — Untuk dokumentasi dan pengujian API.
 ✨ Features
-Pengecekan ketersediaan jaringan berdasarkan area.
-Input alamat pelanggan.
-Validasi form menggunakan Formik dan Yup.
-Responsive user interface menggunakan Material UI.
-REST API menggunakan Next.js API Routes.
-Dokumentasi API menggunakan Swagger.
-Struktur project menggunakan TypeScript.
+
+🌐 Coverage Check
+Mengecek ketersediaan jaringan Golden Net berdasarkan area dan alamat.
+
+📝 Form Validation
+Validasi input menggunakan Formik dan Yup.
+
+🎨 Modern UI
+Antarmuka dibangun menggunakan Material UI dengan desain yang responsif.
+
+⚡ Next.js API
+Backend API menggunakan API Routes dari Next.js.
+
+📖 Swagger Documentation
+Dokumentasi API tersedia menggunakan Swagger.
+
+📱 Responsive Design
+Dapat digunakan pada desktop maupun perangkat mobile.
+
+🛠️ Tech Stack
+Technology	Usage
+Next.js	Web framework
+TypeScript	Type-safe development
+Material UI	User interface
+Formik	Form management
+Yup	Form validation
+Swagger	API documentation
 📡 Coverage API
 
-Golden Net menyediakan endpoint untuk melakukan pengecekan coverage:
+Endpoint untuk melakukan pengecekan coverage:
 
 POST /api/coverage
 
@@ -44,93 +58,106 @@ Response
 }
 
 
-Status coverage pada versi saat ini masih menggunakan data area sementara dan dapat dikembangkan lebih lanjut menggunakan data jaringan aktual.
+Note: Sistem coverage pada tahap pengembangan masih menggunakan data sementara dan dapat dikembangkan lebih lanjut menggunakan data jaringan aktual.
 
 📚 API Documentation
 
-Dokumentasi API menggunakan Swagger untuk menjelaskan endpoint, request, response, dan status code.
+API Golden Net menggunakan Swagger sebagai dokumentasi endpoint.
 
-Dokumentasi dapat digunakan selama development untuk memeriksa dan menguji API yang tersedia.
+Swagger membantu developer untuk:
 
-📁 Project Structure
+melihat endpoint yang tersedia;
+memahami request dan response;
+melakukan pengujian API;
+memahami struktur data API.
+🚀 Getting Started
+1. Clone Repository
+git clone https://github.com/indratjgnoc/goldennet.git
 
-Struktur project secara umum:
+2. Masuk ke Project
+cd goldennet
 
+3. Install Dependencies
+npm install
+
+4. Jalankan Development Server
+npm run dev
+
+
+Aplikasi dapat diakses melalui:
+
+http://localhost:3000
+
+🏗️ Production
+
+Build aplikasi:
+
+npm run build
+
+
+Jalankan production server:
+
+npm start
+
+🔎 Code Quality
+
+Jalankan linting untuk memeriksa kualitas kode:
+
+npm run lint
+
+📂 Project Structure
 goldennet/
+│
 ├── public/
+│
 ├── src/
 │   └── app/
 │       ├── api/
 │       │   └── coverage/
 │       │       └── route.ts
+│       │
 │       └── ...
+│
 ├── package.json
 ├── tsconfig.json
 ├── next.config.ts
 └── README.md
 
-🛠️ Installation
-
-Clone repository:
-
-git clone https://github.com/indratjgnoc/goldennet.git
-
-
-Masuk ke directory project:
-
-cd goldennet
-
-
-Install dependencies:
-
-npm install
-
-▶️ Development
-
-Jalankan development server:
-
-npm run dev
-
-
-Kemudian buka:
-
-http://localhost:3000
-
-🏗️ Production Build
-
-Untuk membuat production build:
-
-npm run build
-
-
-Menjalankan aplikasi dalam mode production:
-
-npm start
-
-🔍 Linting
-
-Untuk memeriksa kualitas dan konsistensi kode:
-
-npm run lint
-
-📌 Development Status
-
-Project masih dalam tahap pengembangan.
-
-Completed
- Next.js setup
+🗺️ Roadmap
+ Next.js application
  TypeScript
  Material UI
  Formik
  Yup validation
  Coverage API
  Swagger documentation
-Planned
  Database integration
- Real-time coverage checking
- ODP/ODC network data integration
- Network coverage mapping
- Additional customer features
-📄 License
+ Real coverage validation
+ ODP / ODC integration
+ Coverage mapping
+ Customer service features
+🔐 Security
 
-This project is intended for development and operational purposes of Golden Net.
+Project ini tidak menyimpan credential atau secret secara langsung di source code.
+
+Untuk konfigurasi yang bersifat rahasia, gunakan environment variable dan jangan memasukkannya ke repository.
+
+📌 Project Status
+
+🚧 Under Development
+
+Golden Net masih dalam tahap pengembangan dan akan terus dikembangkan untuk mendukung kebutuhan layanan jaringan internet.
+
+🔗 Repository
+
+GitHub:
+https://github.com/indratjgnoc/goldennet
+
+<div align="center">
+🌐 Golden Net
+
+Connecting People. Connecting Future.
+
+Made with ❤️ using Next.js
+
+</div>
