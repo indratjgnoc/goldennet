@@ -1,161 +1,229 @@
-'use client';
+"use client";
 import Link from 'next/link';
 
 import {
   Box,
   Container,
   Divider,
-  Grid,
+  Stack,
   Typography,
 } from '@mui/material';
 
-import WifiRoundedIcon from '@mui/icons-material/WifiRounded';
+const footerMenus = [
+  {
+    title: 'Navigasi',
+    links: [
+      {
+        label: 'Home',
+        href: '/',
+      },
+      {
+        label: 'Layanan',
+        href: '/layanan',
+      },
+      {
+        label: 'Paket Internet',
+        href: '/paket',
+      },
+      {
+        label: 'Coverage',
+        href: '/coverage',
+      },
+    ],
+  },
+  {
+    title: 'Golden Net',
+    links: [
+      {
+        label: 'Tentang Kami',
+        href: '/tentang',
+      },
+      {
+        label: 'Cabang',
+        href: '/cabang',
+      },
+      {
+        label: 'Kontak',
+        href: '/kontak',
+      },
+    ],
+  },
+];
 
 export default function Footer() {
   return (
     <Box
       component="footer"
       sx={{
-        mt: 10,
-        backgroundColor: '#080B09',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        backgroundColor: '#050806',
+        borderTop:
+          '1px solid rgba(255,255,255,0.06)',
       }}
     >
-      <Container maxWidth="xl" sx={{ py: 7 }}>
-        <Grid container spacing={5}>
-          {/* BRAND */}
-          <Grid size={{ xs: 12, md: 5 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.2,
-                mb: 2,
-              }}
-            >
-              <Box
-                sx={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'primary.main',
-                  color: '#050505',
-                }}
-              >
-                <WifiRoundedIcon />
-              </Box>
-
-              <Typography variant="h6" sx={{ fontWeight: 900 }}>
-                GOLDEN
-                <Box component="span" sx={{ color: 'primary.main' }}>
-                  NET
-                </Box>
-              </Typography>
-            </Box>
-
-            <Typography
-              color="text.secondary"
-              sx={{
-                maxWidth: 460,
-                lineHeight: 1.8,
-              }}
-            >
-              Penyedia layanan internet yang menghadirkan koneksi cepat,
-              stabil, dan terpercaya untuk rumah, bisnis, serta kebutuhan
-              profesional.
-            </Typography>
-          </Grid>
-
-          {/* NAVIGATION */}
-          <Grid size={{ xs: 6, md: 2 }}>
-            <Typography component="div" sx={{ fontWeight: 700, mb: 2 }}>
-              Navigasi
-            </Typography>
-
-            {[
-              ['Home', '/'],
-              ['Layanan', '/layanan'],
-              ['Paket', '/paket'],
-              ['Coverage', '/coverage'],
-            ].map(([label, href]) => (
-              <Typography
-                key={href}
-                component={Link}
-                href={href}
-                color="text.secondary"
-                sx={{
-                  display: 'block',
-                  mb: 1.2,
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                {label}
-              </Typography>
-            ))}
-          </Grid>
-
-          {/* COMPANY */}
-          <Grid size={{ xs: 6, md: 2 }}>
-            <Typography component="div" sx={{ fontWeight: 700, mb: 2 }}>
-              Perusahaan
-            </Typography>
-
-            {[
-              ['Tentang Kami', '/tentang'],
-              ['Cabang', '/cabang'],
-              ['Berita', '/berita'],
-              ['Kontak', '/kontak'],
-            ].map(([label, href]) => (
-              <Typography
-                key={href}
-                component={Link}
-                href={href}
-                color="text.secondary"
-                sx={{
-                  display: 'block',
-                  mb: 1.2,
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                {label}
-              </Typography>
-            ))}
-          </Grid>
-
-          {/* HEAD OFFICE */}
-          <Grid size={{ xs: 12, md: 3 }}>
-            <Typography component="div" sx={{ fontWeight: 700, mb: 2 }}>
-              Kantor Pusat
-            </Typography>
-
-            <Typography
-              component="div"
-              color="text.secondary"
-              sx={{ lineHeight: 1.8 }}
-            >
-              Biaro
-              <br />
-              Bukittinggi, Sumatera Barat
-            </Typography>
-          </Grid>
-        </Grid>
-
-        <Divider sx={{ my: 5 }} />
-
-        <Typography
-          component="div"
-          color="text.secondary"
-          sx={{ fontSize: '0.85rem', textAlign: 'center' }}
+      <Container maxWidth="xl">
+        {/* MAIN FOOTER */}
+        <Box
+          sx={{
+            py: {
+              xs: 6,
+              sm: 7,
+              md: 9,
+            },
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: '1.5fr repeat(2, 1fr)',
+              md: '2fr repeat(2, 1fr)',
+            },
+            gap: {
+              xs: 5,
+              sm: 4,
+              md: 8,
+            },
+          }}
         >
-          © {new Date().getFullYear()} Golden Net. All rights reserved.
-        </Typography>
+          {/* BRAND */}
+          <Box>
+            <Typography
+              component={Link}
+              href="/"
+              sx={{
+                display: 'inline-block',
+                textDecoration: 'none',
+                color: 'white',
+                fontWeight: 900,
+                letterSpacing: '-0.04em',
+                fontSize: {
+                  xs: '1.3rem',
+                  md: '1.5rem',
+                },
+              }}
+            >
+              GOLDEN
+              <Box
+                component="span"
+                sx={{
+                  color: 'primary.main',
+                  ml: 0.5,
+                }}
+              >
+                NET
+              </Box>
+            </Typography>
+
+            <Typography
+              color="text.secondary"
+              sx={{
+                mt: 2,
+                maxWidth: 420,
+                lineHeight: 1.8,
+                fontSize: {
+                  xs: '0.88rem',
+                  md: '0.92rem',
+                },
+              }}
+            >
+              Internet cepat dan stabil untuk
+              masyarakat, rumah, bisnis, dan kebutuhan
+              digital di wilayah layanan Golden Net.
+            </Typography>
+
+            <Typography
+              color="text.secondary"
+              sx={{
+                mt: 2,
+                fontSize: '0.8rem',
+              }}
+            >
+              Pusat: Biaro, Bukittinggi
+            </Typography>
+          </Box>
+
+          {/* MENU */}
+          {footerMenus.map((group) => (
+            <Box key={group.title}>
+              <Typography
+                sx={{
+                  mb: 2,
+                  fontWeight: 800,
+                  fontSize: {
+                    xs: '0.9rem',
+                    md: '0.95rem',
+                  },
+                }}
+              >
+                {group.title}
+              </Typography>
+
+              <Stack spacing={1.25}>
+                {group.links.map((link) => (
+                  <Box
+                    key={link.href}
+                    component={Link}
+                    href={link.href}
+                    sx={{
+                      color: 'text.secondary',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                      transition: 'color .2s ease',
+
+                      '&:hover': {
+                        color: 'primary.main',
+                      },
+                    }}
+                  >
+                    {link.label}
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          ))}
+        </Box>
+
+        <Divider
+          sx={{
+            borderColor:
+              'rgba(255,255,255,0.06)',
+          }}
+        />
+
+        {/* BOTTOM */}
+        <Stack
+          component="div"
+          direction={{
+            xs: 'column',
+            sm: 'row',
+          }}
+          spacing={1.5}
+          sx={{
+            py: 3,
+            justifyContent: 'space-between',
+            alignItems: {
+              xs: 'flex-start',
+              sm: 'center',
+            },
+          }}
+        >
+          <Typography
+            color="text.secondary"
+            sx={{
+              fontSize: '0.75rem',
+              lineHeight: 1.6,
+            }}
+          >
+            © {new Date().getFullYear()} Golden Net.
+            All rights reserved.
+          </Typography>
+
+          <Typography
+            color="text.secondary"
+            sx={{
+              fontSize: '0.75rem',
+            }}
+          >
+            PT GNet Biaro
+          </Typography>
+        </Stack>
       </Container>
     </Box>
   );

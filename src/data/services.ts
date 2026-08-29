@@ -1,42 +1,67 @@
-import SpeedRoundedIcon from '@mui/icons-material/SpeedRounded';
-import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
-
-export interface ServiceItem {
+export interface Service {
   id: number;
   title: string;
   description: string;
-  icon: typeof SpeedRoundedIcon;
+  icon: string;
+  category: string;
+  features: string[];
 }
 
-export const services: ServiceItem[] = [
+export const services: Service[] = [
   {
     id: 1,
     title: 'Internet Rumah',
     description:
-      'Koneksi internet cepat dan stabil untuk keluarga, streaming, belajar, dan kebutuhan sehari-hari.',
-    icon: HomeRoundedIcon,
+      'Layanan internet cepat dan stabil untuk kebutuhan keluarga, streaming, belajar, bekerja, dan aktivitas digital sehari-hari.',
+    icon: 'home',
+    category: 'Residential',
+    features: [
+      'Koneksi stabil',
+      'Pilihan kecepatan beragam',
+      'Support pelanggan',
+      'Instalasi profesional',
+    ],
   },
   {
     id: 2,
     title: 'Internet Bisnis',
     description:
-      'Solusi konektivitas untuk mendukung operasional bisnis dan produktivitas perusahaan.',
-    icon: BusinessRoundedIcon,
+      'Koneksi internet yang dirancang untuk mendukung operasional kantor, toko, usaha, dan kebutuhan bisnis.',
+    icon: 'business',
+    category: 'Business',
+    features: [
+      'Koneksi dedicated option',
+      'Prioritas support',
+      'Stabil untuk operasional',
+      'Solusi sesuai kebutuhan',
+    ],
   },
   {
     id: 3,
-    title: 'High Speed Internet',
+    title: 'Internet UMKM',
     description:
-      'Nikmati koneksi berkecepatan tinggi untuk kebutuhan digital yang semakin berkembang.',
-    icon: SpeedRoundedIcon,
+      'Solusi konektivitas terjangkau untuk mendukung UMKM menjalankan aktivitas digital dan transaksi online.',
+    icon: 'storefront',
+    category: 'UMKM',
+    features: [
+      'Harga terjangkau',
+      'Koneksi stabil',
+      'Mendukung transaksi online',
+      'Support pelanggan',
+    ],
   },
   {
     id: 4,
-    title: 'Technical Support',
+    title: 'Corporate Network',
     description:
-      'Tim support siap membantu menangani kebutuhan dan kendala konektivitas pelanggan.',
-    icon: SupportAgentRoundedIcon,
+      'Solusi jaringan untuk perusahaan dengan kebutuhan konektivitas yang lebih kompleks dan scalable.',
+    icon: 'lan',
+    category: 'Corporate',
+    features: [
+      'Network planning',
+      'Monitoring',
+      'Scalable infrastructure',
+      'Technical support',
+    ],
   },
 ];

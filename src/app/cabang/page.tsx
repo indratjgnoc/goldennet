@@ -6,14 +6,14 @@ import {
 
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-
 import BranchCard from '@/components/cards/BranchCard';
+
 import { branches } from '@/data/branches';
 
 export const metadata = {
   title: 'Cabang | Golden Net',
   description:
-    'Informasi kantor pusat dan cabang Golden Net.',
+    'Informasi pusat dan cabang layanan Golden Net.',
 };
 
 export default function CabangPage() {
@@ -22,81 +22,126 @@ export default function CabangPage() {
       <Navbar />
 
       <Box
-        component="section"
+        component="main"
         sx={{
-          py: {
-            xs: 8,
-            md: 12,
-          },
-          backgroundColor: '#080B09',
+          overflow: 'hidden',
         }}
       >
-        <Container maxWidth="xl">
-          <Typography
-            component="span"
-            sx={{
-              color: 'primary.main',
-              fontWeight: 800,
-              letterSpacing: '0.16em',
-              fontSize: '0.78rem',
-            }}
-          >
-            GOLDEN NET NETWORK
-          </Typography>
+        {/* HERO */}
+        <Box
+          component="section"
+          sx={{
+            py: {
+              xs: 7,
+              sm: 9,
+              md: 12,
+            },
+            background:
+              'radial-gradient(circle at 50% 0%, rgba(34,197,94,0.1), transparent 42%)',
+          }}
+        >
+          <Container maxWidth="lg">
+            <Typography
+              component="span"
+              color="primary.main"
+              sx={{
+                fontWeight: 800,
+                letterSpacing: '0.16em',
+                fontSize: {
+                  xs: '0.65rem',
+                  sm: '0.75rem',
+                },
+              }}
+            >
+              JARINGAN GOLDEN NET
+            </Typography>
 
-          <Typography
-            variant="h1"
-            sx={{
-              mt: 2,
-              fontSize: {
-                xs: '2.8rem',
-                md: '5rem',
-              },
-            }}
-          >
-            Hadir lebih dekat.
-          </Typography>
+            <Typography
+              component="h1"
+              sx={{
+                mt: 2,
+                fontWeight: 900,
+                letterSpacing: '-0.05em',
+                lineHeight: 1.04,
+                fontSize: {
+                  xs: '2.5rem',
+                  sm: '3.5rem',
+                  md: '5rem',
+                },
+              }}
+            >
+              Terhubung lebih
+              <br />
 
-          <Typography
-            color="text.secondary"
-            sx={{
-              mt: 3,
-              maxWidth: 700,
-              lineHeight: 1.8,
-            }}
-          >
-            Golden Net terus memperluas jaringan untuk
-            menghadirkan konektivitas yang lebih dekat dengan
-            pelanggan.
-          </Typography>
-        </Container>
-      </Box>
+              <Box
+                component="span"
+                sx={{
+                  color: 'primary.main',
+                }}
+              >
+                dekat dengan Anda.
+              </Box>
+            </Typography>
 
-      <Box
-        component="section"
-        sx={{
-          py: 10,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                md: 'repeat(3, 1fr)',
-              },
-              gap: 3,
-            }}
-          >
-            {branches.map((branch) => (
-              <BranchCard
-                key={branch.id}
-                branch={branch}
-              />
-            ))}
-          </Box>
-        </Container>
+            <Typography
+              color="text.secondary"
+              sx={{
+                mt: 3,
+                maxWidth: 680,
+                lineHeight: 1.8,
+                fontSize: {
+                  xs: '0.95rem',
+                  sm: '1rem',
+                },
+              }}
+            >
+              Golden Net berpusat di Biaro, Bukittinggi
+              dan terus mengembangkan jaringan layanan
+              untuk menjangkau lebih banyak pelanggan.
+            </Typography>
+          </Container>
+        </Box>
+
+        {/* BRANCHES */}
+        <Box
+          component="section"
+          sx={{
+            pb: {
+              xs: 8,
+              sm: 10,
+              md: 14,
+            },
+          }}
+        >
+          <Container maxWidth="xl">
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  lg: 'repeat(3, minmax(0, 1fr))',
+                },
+                gap: {
+                  xs: 2,
+                  sm: 2.5,
+                  md: 3,
+                },
+              }}
+            >
+              {branches.map((branch) => (
+                <Box
+                  key={branch.id}
+                  sx={{
+                    minWidth: 0,
+                  }}
+                >
+                  <BranchCard branch={branch} />
+                </Box>
+              ))}
+            </Box>
+          </Container>
+        </Box>
       </Box>
 
       <Footer />

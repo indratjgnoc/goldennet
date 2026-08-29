@@ -6,9 +6,10 @@ import Button, {
   type ButtonProps,
 } from '@mui/material/Button';
 
-interface LinkButtonProps extends Omit<ButtonProps, 'href' | 'component'> {
+type LinkButtonProps = Omit<ButtonProps, 'href' | 'component'> & {
   href: string;
-}
+  component?: React.ElementType;
+};
 
 export default function LinkButton({
   href,

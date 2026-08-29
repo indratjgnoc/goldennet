@@ -1,40 +1,40 @@
-import Link from "next/link";
+import {
+  Box,
+  Container,
+  Stack,
+  Typography,
+} from '@mui/material';
 
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import SpeedRoundedIcon from '@mui/icons-material/SpeedRounded';
+import WifiRoundedIcon from '@mui/icons-material/WifiRounded';
+import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
+import NetworkCheckRoundedIcon from '@mui/icons-material/NetworkCheckRounded';
 
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
-import SpeedRoundedIcon from "@mui/icons-material/SpeedRounded";
-import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
-import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
-import NetworkCheckRoundedIcon from "@mui/icons-material/NetworkCheckRounded";
-import LinkButton from "@/components/ui/LinkButton";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
-import ServicesSection from "@/components/home/ServicesSection";
-import PackagesSection from "@/components/home/PackagesSection";
-import CoverageCTA from "@/components/home/CoverageCTA";
+import ServicesSection from '@/components/home/ServicesSection';
+import PackagesSection from '@/components/home/PackagesSection';
+import CoverageCTA from '@/components/home/CoverageCTA';
 
-const stats = [
+import LinkButton from '@/components/ui/LinkButton';
+
+const highlights = [
   {
-    icon: <SpeedRoundedIcon />,
-    value: "High Speed",
-    label: "Koneksi Cepat",
+    icon: SpeedRoundedIcon,
+    value: 'High Speed',
+    description: 'Internet cepat untuk aktivitas digital.',
   },
   {
-    icon: <WifiRoundedIcon />,
-    value: "Stable",
-    label: "Koneksi Stabil",
+    icon: WifiRoundedIcon,
+    value: 'Stable Connection',
+    description: 'Koneksi stabil untuk rumah dan bisnis.',
   },
   {
-    icon: <NetworkCheckRoundedIcon />,
-    value: "24/7",
-    label: "Network Monitoring",
-  },
-  {
-    icon: <SupportAgentRoundedIcon />,
-    value: "Support",
-    label: "Customer Support",
+    icon: SupportAgentRoundedIcon,
+    value: 'Customer Support',
+    description: 'Dukungan untuk kebutuhan pelanggan.',
   },
 ];
 
@@ -43,156 +43,197 @@ export default function HomePage() {
     <>
       <Navbar />
 
-      <main>
-        {/* HERO */}
+      {/* HERO */}
+      <Box
+        component="main"
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          background:
+            'radial-gradient(circle at 75% 35%, rgba(34,197,94,0.14), transparent 30%), #080B09',
+        }}
+      >
+        {/* DECORATION */}
         <Box
-          component="section"
           sx={{
-            minHeight: {
-              xs: "auto",
-              md: "calc(100vh - 76px)",
+            position: 'absolute',
+            width: {
+              xs: 220,
+              sm: 320,
+              md: 500,
             },
-            display: "flex",
-            alignItems: "center",
-            position: "relative",
-            overflow: "hidden",
+            height: {
+              xs: 220,
+              sm: 320,
+              md: 500,
+            },
+            borderRadius: '50%',
+            border:
+              '1px solid rgba(34,197,94,0.08)',
+            right: {
+              xs: '-120px',
+              md: '-180px',
+            },
+            top: {
+              xs: '80px',
+              md: '20px',
+            },
+            pointerEvents: 'none',
           }}
-        >
-          {/* BACKGROUND GRID */}
+        />
+
+        <Container maxWidth="xl">
           <Box
             sx={{
-              position: "absolute",
-              inset: 0,
-              opacity: 0.25,
-              backgroundImage: `
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
-              `,
-              backgroundSize: "60px 60px",
+              minHeight: {
+                xs: 'auto',
+                md: 'calc(100vh - 78px)',
+              },
+              display: 'flex',
+              alignItems: 'center',
+              py: {
+                xs: 8,
+                sm: 10,
+                md: 12,
+              },
             }}
-          />
-
-          {/* GREEN GLOW */}
-          <Box
-            sx={{
-              position: "absolute",
-              width: 650,
-              height: 650,
-              borderRadius: "50%",
-              backgroundColor: "rgba(34,197,94,0.09)",
-              filter: "blur(120px)",
-              top: -200,
-              right: -150,
-            }}
-          />
-
-          <Container maxWidth="xl">
+          >
             <Box
               sx={{
-                position: "relative",
-                zIndex: 1,
-                py: {
-                  xs: 10,
-                  md: 14,
-                },
-                maxWidth: 950,
+                width: '100%',
+                maxWidth: 900,
               }}
             >
-              <Box
+              {/* LABEL */}
+              <Stack
+                component="div"
+                direction="row"
+                spacing={1}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 1,
-                  px: 1.8,
-                  py: 0.8,
-                  borderRadius: 10,
-                  backgroundColor: "rgba(34,197,94,0.08)",
-                  border: "1px solid rgba(34,197,94,0.16)",
+                  alignItems: 'center',
+                  mb: {
+                    xs: 2.5,
+                    md: 3,
+                  },
                 }}
               >
-                <Box
+                <NetworkCheckRoundedIcon
                   sx={{
-                    width: 7,
-                    height: 7,
-                    borderRadius: "50%",
-                    backgroundColor: "primary.main",
-                    boxShadow: "0 0 15px rgba(34,197,94,0.8)",
+                    color: 'primary.main',
+                    fontSize: {
+                      xs: 20,
+                      md: 22,
+                    },
                   }}
                 />
 
                 <Typography
                   component="span"
+                  color="primary.main"
                   sx={{
-                    color: "primary.main",
                     fontWeight: 800,
-                    fontSize: "0.72rem",
-                    letterSpacing: "0.12em",
+                    letterSpacing: '0.12em',
+                    fontSize: {
+                      xs: '0.68rem',
+                      sm: '0.75rem',
+                    },
                   }}
                 >
                   GOLDEN NET • BIARO
                 </Typography>
-              </Box>
+              </Stack>
 
+              {/* TITLE */}
               <Typography
                 component="h1"
                 sx={{
-                  mt: 3,
-                  fontSize: {
-                    xs: "3.2rem",
-                    sm: "4.5rem",
-                    md: "6.5rem",
-                  },
-                  lineHeight: 0.94,
                   fontWeight: 900,
-                  letterSpacing: "-0.055em",
+                  letterSpacing: '-0.055em',
+                  lineHeight: {
+                    xs: 1.04,
+                    md: 0.98,
+                  },
+                  fontSize: {
+                    xs: '2.7rem',
+                    sm: '3.7rem',
+                    md: '5.5rem',
+                    lg: '6.3rem',
+                  },
+                  maxWidth: {
+                    xs: '100%',
+                    md: 900,
+                  },
                 }}
               >
-                INTERNET
+                Internet cepat.
                 <br />
                 <Box
                   component="span"
                   sx={{
-                    color: "primary.main",
+                    color: 'primary.main',
                   }}
                 >
-                  WITHOUT
+                  Koneksi tanpa batas.
                 </Box>
-                <br />
-                LIMITS.
               </Typography>
 
+              {/* DESCRIPTION */}
               <Typography
                 color="text.secondary"
                 sx={{
-                  mt: 4,
-                  maxWidth: 650,
+                  mt: {
+                    xs: 3,
+                    md: 4,
+                  },
+                  maxWidth: 680,
                   fontSize: {
-                    xs: "1rem",
-                    md: "1.15rem",
+                    xs: '0.98rem',
+                    sm: '1.05rem',
+                    md: '1.15rem',
                   },
                   lineHeight: 1.8,
                 }}
               >
-                Koneksi internet cepat, stabil, dan terpercaya untuk rumah,
-                bisnis, pendidikan, dan kebutuhan profesional.
+                Golden Net menghadirkan layanan internet
+                yang cepat, stabil, dan dapat diandalkan
+                untuk rumah, bisnis, pendidikan, dan
+                kebutuhan digital Anda.
               </Typography>
 
+              {/* BUTTON */}
               <Stack
                 direction={{
-                  xs: "column",
-                  sm: "row",
+                  xs: 'column',
+                  sm: 'row',
                 }}
-                spacing={2}
-                sx={{ mt: 5 }}
+                spacing={1.5}
+                sx={{
+                  mt: {
+                    xs: 4,
+                    md: 5,
+                  },
+                  width: '100%',
+                  maxWidth: {
+                    xs: 420,
+                    sm: 'none',
+                  },
+                }}
               >
                 <LinkButton
                   href="/paket"
                   variant="contained"
                   size="large"
-                  endIcon={<ArrowForwardRoundedIcon />}
+                  endIcon={
+                    <ArrowForwardRoundedIcon />
+                  }
+                  fullWidth
                   sx={{
+                    width: {
+                      xs: '100%',
+                      sm: 'auto',
+                    },
+                    minHeight: 52,
                     px: 3,
-                    py: 1.5,
                   }}
                 >
                   Lihat Paket Internet
@@ -203,93 +244,108 @@ export default function HomePage() {
                   variant="outlined"
                   color="inherit"
                   size="large"
+                  fullWidth
                   sx={{
+                    width: {
+                      xs: '100%',
+                      sm: 'auto',
+                    },
+                    minHeight: 52,
                     px: 3,
-                    py: 1.5,
-                    borderColor: "rgba(255,255,255,0.18)",
+                    borderColor:
+                      'rgba(255,255,255,0.18)',
                   }}
                 >
                   Cek Coverage
                 </LinkButton>
               </Stack>
-            </Box>
-          </Container>
-        </Box>
 
-        {/* STATS */}
-        <Box
-          sx={{
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-            backgroundColor: "#080B09",
-          }}
-        >
-          <Container maxWidth="xl">
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(2, 1fr)",
-                  md: "repeat(4, 1fr)",
-                },
-              }}
-            >
-              {stats.map((stat, index) => (
-                <Box
-                  key={stat.label}
-                  sx={{
-                    py: 3,
-                    px: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1.8,
-                    borderRight:
-                      index !== stats.length - 1
-                        ? "1px solid rgba(255,255,255,0.06)"
-                        : "none",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      color: "primary.main",
-                      display: "flex",
-                    }}
-                  >
-                    {stat.icon}
-                  </Box>
+              {/* HIGHLIGHTS */}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: '1fr',
+                    sm: 'repeat(3, 1fr)',
+                  },
+                  gap: {
+                    xs: 1.5,
+                    md: 2,
+                  },
+                  mt: {
+                    xs: 6,
+                    md: 8,
+                  },
+                  maxWidth: 850,
+                }}
+              >
+                {highlights.map((item) => {
+                  const Icon = item.icon;
 
-                  <Box>
-                    <Typography
+                  return (
+                    <Box
+                      key={item.value}
                       sx={{
-                        fontWeight: 800,
-                        fontSize: "0.9rem",
+                        p: {
+                          xs: 2,
+                          md: 2.5,
+                        },
+                        borderRadius: 3,
+                        border:
+                          '1px solid rgba(255,255,255,0.07)',
+                        backgroundColor:
+                          'rgba(255,255,255,0.02)',
                       }}
                     >
-                      {stat.value}
-                    </Typography>
+                      <Icon
+                        sx={{
+                          color: 'primary.main',
+                          fontSize: 25,
+                        }}
+                      />
 
-                    <Typography
-                      sx={{
-                        color: "text.secondary",
-                        fontSize: "0.72rem",
-                      }}
-                    >
-                      {stat.label}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
+                      <Typography
+                        sx={{
+                          mt: 1.5,
+                          fontWeight: 800,
+                          fontSize: {
+                            xs: '0.95rem',
+                            md: '1rem',
+                          },
+                        }}
+                      >
+                        {item.value}
+                      </Typography>
+
+                      <Typography
+                        color="text.secondary"
+                        sx={{
+                          mt: 0.5,
+                          fontSize: '0.82rem',
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {item.description}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
             </Box>
-          </Container>
-        </Box>
+          </Box>
+        </Container>
+      </Box>
 
-        <ServicesSection />
+      {/* SERVICES */}
+      <ServicesSection />
 
-        <PackagesSection />
+      {/* PACKAGES */}
+      <PackagesSection />
 
-        <CoverageCTA />
-      </main>
+      {/* COVERAGE */}
+      <CoverageCTA />
 
+      {/* FOOTER */}
       <Footer />
     </>
   );

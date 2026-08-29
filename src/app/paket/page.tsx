@@ -4,9 +4,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import PackageCard from '@/components/cards/PackageCard';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import PackageCard from '@/components/cards/PackageCard';
 
 import { internetPackages } from '@/data/packages';
 
@@ -22,80 +22,127 @@ export default function PaketPage() {
       <Navbar />
 
       <Box
-        component="section"
+        component="main"
         sx={{
-          py: {
-            xs: 8,
-            md: 12,
-          },
-          textAlign: 'center',
+          overflow: 'hidden',
         }}
       >
-        <Container maxWidth="md">
-          <Typography
-            component="span"
-            sx={{
-              color: 'primary.main',
-              fontWeight: 800,
-              letterSpacing: '0.16em',
-              fontSize: '0.78rem',
-            }}
-          >
-            INTERNET PACKAGES
-          </Typography>
+        {/* HERO */}
+        <Box
+          component="section"
+          sx={{
+            py: {
+              xs: 7,
+              sm: 9,
+              md: 12,
+            },
+            background:
+              'radial-gradient(circle at 50% 0%, rgba(34,197,94,0.11), transparent 45%)',
+          }}
+        >
+          <Container maxWidth="lg">
+            <Box
+              sx={{
+                maxWidth: 820,
+              }}
+            >
+              <Typography
+                color="primary.main"
+                sx={{
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.16em',
+                }}
+              >
+                PAKET INTERNET
+              </Typography>
 
-          <Typography
-            variant="h1"
-            sx={{
-              mt: 2,
-              fontSize: {
-                xs: '2.8rem',
-                md: '4.5rem',
-              },
-            }}
-          >
-            Pilih paket internet Anda.
-          </Typography>
+              <Typography
+                component="h1"
+                sx={{
+                  mt: 2,
+                  fontWeight: 900,
+                  letterSpacing: '-0.05em',
+                  lineHeight: 1.04,
+                  fontSize: {
+                    xs: '2.5rem',
+                    sm: '3.5rem',
+                    md: '5rem',
+                  },
+                }}
+              >
+                Pilih kecepatan
+                <br />
 
-          <Typography
-            color="text.secondary"
-            sx={{
-              mt: 3,
-              lineHeight: 1.8,
-            }}
-          >
-            Pilih kecepatan internet yang sesuai dengan
-            kebutuhan rumah, keluarga, maupun aktivitas
-            profesional Anda.
-          </Typography>
-        </Container>
-      </Box>
+                <Box
+                  component="span"
+                  sx={{
+                    color: 'primary.main',
+                  }}
+                >
+                  sesuai kebutuhan.
+                </Box>
+              </Typography>
 
-      <Box
-        component="section"
-        sx={{
-          pb: 12,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                md: 'repeat(3, 1fr)',
-              },
-              gap: 3,
-            }}
-          >
-            {internetPackages.map((item) => (
-              <PackageCard
-                key={item.id}
-                packageData={item}
-              />
-            ))}
-          </Box>
-        </Container>
+              <Typography
+                color="text.secondary"
+                sx={{
+                  mt: 3,
+                  maxWidth: 680,
+                  lineHeight: 1.8,
+                  fontSize: {
+                    xs: '0.92rem',
+                    sm: '1rem',
+                  },
+                }}
+              >
+                Temukan paket internet Golden Net yang
+                sesuai dengan kebutuhan rumah, keluarga,
+                maupun aktivitas digital Anda.
+              </Typography>
+            </Box>
+          </Container>
+        </Box>
+
+        {/* PACKAGES */}
+        <Box
+          component="section"
+          sx={{
+            pb: {
+              xs: 8,
+              sm: 10,
+              md: 14,
+            },
+          }}
+        >
+          <Container maxWidth="xl">
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  lg: 'repeat(4, minmax(0, 1fr))',
+                },
+                gap: {
+                  xs: 2.5,
+                  sm: 2.5,
+                  md: 3,
+                },
+                alignItems: 'stretch',
+              }}
+            >
+              {internetPackages.map(
+                (packageData) => (
+                  <PackageCard
+                    key={packageData.id}
+                    packageData={packageData}
+                  />
+                ),
+              )}
+            </Box>
+          </Container>
+        </Box>
       </Box>
 
       <Footer />
