@@ -352,7 +352,9 @@ export default function RegistrationPage() {
               }}
             >
               <Typography
-                fontWeight={800}
+                sx={{
+                  fontWeight: 800,
+                }}
               >
                 Pendaftaran berhasil!
               </Typography>
@@ -367,8 +369,8 @@ export default function RegistrationPage() {
               </Typography>
 
               <Typography
-                fontWeight={900}
                 sx={{
+                  fontWeight: 900,
                   fontSize: '1.2rem',
                 }}
               >
