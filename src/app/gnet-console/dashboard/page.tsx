@@ -165,7 +165,9 @@ export default function GnetDashboardPage() {
 
                           <Typography
                             variant="h4"
-                            fontWeight={900}
+                            sx={{
+                              fontWeight: 900,
+                            }}
                           >
                             {item.value}
                           </Typography>
@@ -212,7 +214,9 @@ export default function GnetDashboardPage() {
               <Stack spacing={1}>
                 <Typography
                   variant="h6"
-                  fontWeight={900}
+                  sx={{
+                    fontWeight: 900,
+                  }}
                 >
                   Aktivitas Terbaru
                 </Typography>

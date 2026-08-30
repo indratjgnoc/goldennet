@@ -144,8 +144,10 @@ export default function GnetConsoleLoginPage() {
           >
             <Stack
               spacing={1}
-              alignItems="center"
-              textAlign="center"
+              sx={{
+                alignItems: 'center',
+                textAlign: 'center',
+              }}
             >
               <Box
                 sx={{
@@ -174,7 +176,7 @@ export default function GnetConsoleLoginPage() {
 
               <Typography
                 variant="h5"
-                fontWeight={900}
+                sx={{ fontWeight: 900 }}
               >
                 GNET Console
               </Typography>
