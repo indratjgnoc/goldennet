@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 interface CoverageRequest {
   area?: string;
@@ -8,6 +9,16 @@ interface CoverageRequest {
 /**
  * @swagger
  * /api/coverage:
+ *   get:
+ *     summary: Mengambil daftar area coverage
+ *     tags:
+ *       - Coverage
+ *     responses:
+ *       200:
+ *         description: Data coverage berhasil diambil
+ *       500:
+ *         description: Gagal mengambil data coverage
+ *
  *   post:
  *     summary: Memeriksa ketersediaan coverage
  *     tags:
@@ -32,12 +43,75 @@ interface CoverageRequest {
  *       200:
  *         description: Hasil pengecekan coverage
  *       400:
- *         description: Data tidak lengkap
+ *         description: Data tidak lengkap atau format request tidak valid
+ *       500:
+ *         description: Gagal melakukan pengecekan coverage
  */
 
-export async function POST(
-  request: Request,
-) {
+/**
+ * GET /api/coverage
+ *
+ * Mengambil semua area coverage yang aktif
+ * dan hanya dari branch yang aktif.
+ */
+export async function GET() {
+  try {
+    const coverageAreas =
+      await prisma.coverageArea.findMany({
+        where: {
+          isActive: true,
+          branch: {
+            isActive: true,
+          },
+        },
+        orderBy: {
+          name: 'asc',
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          branch: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              address: true,
+            },
+          },
+        },
+      });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Data coverage berhasil diambil.',
+      data: coverageAreas,
+    });
+  } catch (error) {
+    console.error(
+      'GET /api/coverage error:',
+      error,
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Gagal mengambil data coverage.',
+      },
+      {
+        status: 500,
+      },
+    );
+  }
+}
+
+/**
+ * POST /api/coverage
+ *
+ * Mengecek apakah suatu area tersedia
+ * berdasarkan data coverage di database.
+ */
+export async function POST(request: Request) {
   try {
     const body =
       (await request.json()) as CoverageRequest;
@@ -49,8 +123,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          message:
-            'Area dan alamat wajib diisi.',
+          message: 'Area dan alamat wajib diisi.',
         },
         {
           status: 400,
@@ -58,21 +131,34 @@ export async function POST(
       );
     }
 
-    /*
-     * Sementara:
-     * Biaro dan Bukittinggi dianggap tersedia.
-     *
-     * Nanti diganti dengan pengecekan database
-     * berdasarkan ODP / ODC / titik jaringan.
-     */
+    const coverageArea =
+      await prisma.coverageArea.findFirst({
+        where: {
+          name: {
+            equals: area,
+            mode: 'insensitive',
+          },
+          isActive: true,
+          branch: {
+            isActive: true,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          branch: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              address: true,
+            },
+          },
+        },
+      });
 
-    const availableAreas = [
-      'Biaro',
-      'Bukittinggi',
-    ];
-
-    const isAvailable =
-      availableAreas.includes(area);
+    const isAvailable = !!coverageArea;
 
     return NextResponse.json({
       success: true,
@@ -80,20 +166,25 @@ export async function POST(
         available: isAvailable,
         area,
         address,
+        coverage: coverageArea,
         message: isAvailable
           ? 'Jaringan Golden Net tersedia di area tersebut.'
           : 'Coverage belum tersedia di area tersebut.',
       },
     });
-  } catch {
+  } catch (error) {
+    console.error(
+      'POST /api/coverage error:',
+      error,
+    );
+
     return NextResponse.json(
       {
         success: false,
-        message:
-          'Format request tidak valid.',
+        message: 'Gagal melakukan pengecekan coverage.',
       },
       {
-        status: 400,
+        status: 500,
       },
     );
   }

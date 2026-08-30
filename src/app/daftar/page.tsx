@@ -1,382 +1,709 @@
-'use client';
+~'use client';
 
 import {
+  Alert,
   Box,
+  Button,
+  CircularProgress,
   Container,
-  Paper,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import RegistrationForm from '@/components/forms/RegistrationForm';
+import { useFormik } from 'formik';
 
-import { internetPackages } from '@/data/packages';
+import * as Yup from 'yup';
 
-export default function DaftarPage() {
-  const searchParams = useSearchParams();
+interface InternetPackage {
+  id: number;
+  name: string;
+  code: string;
+  speed: number;
+  price: number;
+  description: string | null;
+  isPopular: boolean;
+}
 
-  const packageId = Number(
-    searchParams.get('paket'),
-  );
+interface CoverageArea {
+  id: number;
+  name: string;
+  description: string | null;
 
-  const selectedPackage =
-    internetPackages.find(
-      (item) => item.id === packageId,
-    );
+  branch: {
+    id: number;
+    name: string;
+    code: string;
+    address: string;
+  };
+}
 
-  return (
-    <>
-      <Navbar />
+const validationSchema = Yup.object({
+  packageId: Yup.number()
+    .required(
+      'Paket internet wajib dipilih.',
+    )
+    .moreThan(
+      0,
+      'Paket internet wajib dipilih.',
+    ),
 
+  coverageId: Yup.number()
+    .required(
+      'Area pemasangan wajib dipilih.',
+    )
+    .moreThan(
+      0,
+      'Area pemasangan wajib dipilih.',
+    ),
+
+  name: Yup.string()
+    .min(
+      3,
+      'Nama minimal 3 karakter.',
+    )
+    .required(
+      'Nama wajib diisi.',
+    ),
+
+  phone: Yup.string()
+    .matches(
+      /^[0-9+\-\s]+$/,
+      'Nomor WhatsApp tidak valid.',
+    )
+    .min(
+      10,
+      'Nomor WhatsApp terlalu pendek.',
+    )
+    .required(
+      'Nomor WhatsApp wajib diisi.',
+    ),
+
+  email: Yup.string()
+    .email(
+      'Format email tidak valid.',
+    )
+    .required(
+      'Email wajib diisi.',
+    ),
+
+  address: Yup.string()
+    .min(
+      10,
+      'Alamat minimal 10 karakter.',
+    )
+    .required(
+      'Alamat pemasangan wajib diisi.',
+    ),
+
+  notes: Yup.string().max(
+    500,
+    'Catatan maksimal 500 karakter.',
+  ),
+});
+
+export default function RegistrationPage() {
+  const [packages, setPackages] =
+    useState<InternetPackage[]>([]);
+
+  const [coverageAreas, setCoverageAreas] =
+    useState<CoverageArea[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [loadError, setLoadError] =
+    useState('');
+
+  const [successData, setSuccessData] =
+    useState<{
+      registrationCode: string;
+      name: string;
+    } | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+
+        const [
+          packagesResponse,
+          coverageResponse,
+        ] = await Promise.all([
+          fetch('/api/packages'),
+          fetch('/api/coverage'),
+        ]);
+
+        const packagesResult =
+          await packagesResponse.json();
+
+        const coverageResult =
+          await coverageResponse.json();
+
+        if (
+          !packagesResponse.ok ||
+          !packagesResult.success
+        ) {
+          throw new Error(
+            'Gagal mengambil data paket.',
+          );
+        }
+
+        if (
+          !coverageResponse.ok ||
+          !coverageResult.success
+        ) {
+          throw new Error(
+            'Gagal mengambil data coverage.',
+          );
+        }
+
+        setPackages(
+          packagesResult.data,
+        );
+
+        setCoverageAreas(
+          coverageResult.data,
+        );
+      } catch (error) {
+        setLoadError(
+          error instanceof Error
+            ? error.message
+            : 'Gagal memuat data.',
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      packageId: '',
+      coverageId: '',
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+      notes: '',
+    },
+
+    validationSchema,
+
+    onSubmit: async (
+      values,
+      { setSubmitting, resetForm },
+    ) => {
+      try {
+        const response =
+          await fetch(
+            '/api/registrations',
+            {
+              method: 'POST',
+
+              headers: {
+                'Content-Type':
+                  'application/json',
+              },
+
+              body: JSON.stringify({
+                ...values,
+
+                packageId:
+                  Number(
+                    values.packageId,
+                  ),
+
+                coverageId:
+                  Number(
+                    values.coverageId,
+                  ),
+              }),
+            },
+          );
+
+        const result =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            result.message ||
+              'Pendaftaran gagal.',
+          );
+        }
+
+        setSuccessData({
+          registrationCode:
+            result.data
+              .registrationCode,
+
+          name:
+            result.data.name,
+        });
+
+        resetForm();
+      } catch (error) {
+        alert(
+          error instanceof Error
+            ? error.message
+            : 'Terjadi kesalahan.',
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  if (loading) {
+    return (
       <Box
-        component="main"
         sx={{
-          overflow: 'hidden',
+          minHeight: '70vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <Box
-          component="section"
-          sx={{
-            py: {
-              xs: 5,
-              sm: 7,
-              md: 9,
-            },
-            background:
-              'radial-gradient(circle at 50% 0%, rgba(34,197,94,0.09), transparent 45%)',
-          }}
-        >
-          <Container maxWidth="lg">
-            <Link
-              href="/paket"
-              style={{
-                textDecoration: 'none',
-                width: 'fit-content',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  color: 'text.secondary',
-                  mb: 4,
-
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                <ArrowBackRoundedIcon
-                  sx={{
-                    fontSize: 19,
-                  }}
-                />
-
-                <Typography
-                  sx={{
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                  }}
-                >
-                  Kembali ke paket
-                </Typography>
-              </Box>
-            </Link>
-
-            <Box
-              sx={{
-                maxWidth: 800,
-              }}
-            >
-              <Typography
-                color="primary.main"
-                sx={{
-                  fontSize: '0.68rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.15em',
-                }}
-              >
-                PENDAFTARAN PELANGGAN
-              </Typography>
-
-              <Typography
-                component="h1"
-                sx={{
-                  mt: 1.5,
-                  fontWeight: 900,
-                  letterSpacing: '-0.05em',
-                  fontSize: {
-                    xs: '2.2rem',
-                    sm: '3rem',
-                    md: '4rem',
-                  },
-                }}
-              >
-                Daftar layanan
-                <br />
-
-                <Box
-                  component="span"
-                  sx={{
-                    color: 'primary.main',
-                  }}
-                >
-                  Golden Net.
-                </Box>
-              </Typography>
-
-              <Typography
-                color="text.secondary"
-                sx={{
-                  mt: 2,
-                  maxWidth: 650,
-                  lineHeight: 1.8,
-                  fontSize: {
-                    xs: '0.9rem',
-                    sm: '1rem',
-                  },
-                }}
-              >
-                Lengkapi data berikut untuk mengajukan
-                pemasangan layanan internet Golden Net.
-              </Typography>
-            </Box>
-          </Container>
-        </Box>
-
-        <Box
-          component="section"
-          sx={{
-            pb: {
-              xs: 8,
-              sm: 10,
-              md: 14,
-            },
-          }}
-        >
-          <Container maxWidth="lg">
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  md: '0.7fr 1.3fr',
-                },
-                gap: {
-                  xs: 3,
-                  md: 4,
-                },
-                alignItems: 'start',
-              }}
-            >
-              {/* SELECTED PACKAGE */}
-              <Paper
-                elevation={0}
-                sx={{
-                  p: {
-                    xs: 2.5,
-                    sm: 3,
-                  },
-                  borderRadius: {
-                    xs: 3,
-                    md: 4,
-                  },
-                  border:
-                    '1px solid rgba(34,197,94,0.15)',
-                  background:
-                    'linear-gradient(145deg, rgba(34,197,94,0.08), rgba(255,255,255,0.02))',
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 1.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 46,
-                      height: 46,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: 2,
-                      color: 'primary.main',
-                      backgroundColor:
-                        'rgba(34,197,94,0.1)',
-                    }}
-                  >
-                    <PersonRoundedIcon />
-                  </Box>
-
-                  <Box>
-                    <Typography
-                      sx={{
-                        fontWeight: 800,
-                      }}
-                    >
-                      Paket pilihan
-                    </Typography>
-
-                    <Typography
-                      color="text.secondary"
-                      sx={{
-                        fontSize: '0.75rem',
-                      }}
-                    >
-                      Layanan yang akan diajukan
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {selectedPackage ? (
-                  <>
-                    <Typography
-                      sx={{
-                        mt: 4,
-                        fontWeight: 900,
-                        fontSize: '1.35rem',
-                      }}
-                    >
-                      {selectedPackage.name}
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        mt: 1,
-                        display: 'flex',
-                        alignItems: 'baseline',
-                        gap: 0.5,
-                      }}
-                    >
-                      <Typography
-                        color="primary.main"
-                        sx={{
-                          fontSize: '2.5rem',
-                          fontWeight: 900,
-                        }}
-                      >
-                        {selectedPackage.speed}
-                      </Typography>
-
-                      <Typography
-                        color="text.secondary"
-                        sx={{
-                          fontWeight: 700,
-                        }}
-                      >
-                        Mbps
-                      </Typography>
-                    </Box>
-
-                    <Typography
-                      sx={{
-                        mt: 1,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Rp{' '}
-                      {new Intl.NumberFormat(
-                        'id-ID',
-                      ).format(
-                        selectedPackage.price,
-                      )}
-                      <Typography
-                        component="span"
-                        color="text.secondary"
-                        sx={{
-                          ml: 0.5,
-                          fontSize: '0.72rem',
-                        }}
-                      >
-                        /bulan
-                      </Typography>
-                    </Typography>
-                  </>
-                ) : (
-                  <Typography
-                    color="text.secondary"
-                    sx={{
-                      mt: 4,
-                      fontSize: '0.88rem',
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    Belum ada paket yang dipilih.
-                    Silakan kembali ke halaman paket
-                    untuk memilih layanan.
-                  </Typography>
-                )}
-              </Paper>
-
-              {/* REGISTRATION FORM */}
-              <Paper
-                elevation={0}
-                sx={{
-                  p: {
-                    xs: 2.5,
-                    sm: 4,
-                    md: 5,
-                  },
-                  borderRadius: {
-                    xs: 3,
-                    md: 4,
-                  },
-                  border:
-                    '1px solid rgba(255,255,255,0.08)',
-                  backgroundColor:
-                    'rgba(255,255,255,0.02)',
-                }}
-              >
-                <Typography
-                  component="h2"
-                  sx={{
-                    fontWeight: 900,
-                    fontSize: {
-                      xs: '1.4rem',
-                      sm: '1.7rem',
-                    },
-                  }}
-                >
-                  Data calon pelanggan
-                </Typography>
-
-                <Typography
-                  color="text.secondary"
-                  sx={{
-                    mt: 0.7,
-                    mb: 4,
-                    fontSize: '0.84rem',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Masukkan data yang benar agar tim
-                  Golden Net dapat menghubungi Anda.
-                </Typography>
-
-                <RegistrationForm
-                  packageId={
-                    selectedPackage?.id ?? null
-                  }
-                />
-              </Paper>
-            </Box>
-          </Container>
-        </Box>
+        <CircularProgress />
       </Box>
+    );
+  }
 
-      <Footer />
-    </>
+  if (loadError) {
+    return (
+      <Container
+        maxWidth="md"
+        sx={{ py: 8 }}
+      >
+        <Alert severity="error">
+          {loadError}
+        </Alert>
+      </Container>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        py: {
+          xs: 5,
+          md: 9,
+        },
+
+        minHeight: '80vh',
+      }}
+    >
+      <Container maxWidth="md">
+        <Stack spacing={4}>
+          {/* HEADER */}
+
+          <Stack spacing={1}>
+            <Typography
+              variant="overline"
+              sx={{
+                fontWeight: 800,
+                letterSpacing: 2,
+              }}
+            >
+              GOLDEN NET
+            </Typography>
+
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 900,
+
+                fontSize: {
+                  xs: '2rem',
+                  md: '3rem',
+                },
+              }}
+            >
+              Daftar Internet
+            </Typography>
+
+            <Typography
+              color="text.secondary"
+            >
+              Isi data berikut untuk
+              mengajukan pemasangan
+              internet Golden Net.
+            </Typography>
+          </Stack>
+
+          {/* SUCCESS */}
+
+          {successData && (
+            <Alert
+              severity="success"
+              sx={{
+                borderRadius: 3,
+              }}
+            >
+              <Typography
+                fontWeight={800}
+              >
+                Pendaftaran berhasil!
+              </Typography>
+
+              <Typography>
+                Terima kasih,{' '}
+                {successData.name}.
+              </Typography>
+
+              <Typography>
+                Nomor pendaftaran Anda:
+              </Typography>
+
+              <Typography
+                fontWeight={900}
+                sx={{
+                  fontSize: '1.2rem',
+                }}
+              >
+                {
+                  successData.registrationCode
+                }
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{ mt: 1 }}
+              >
+                Simpan nomor ini untuk
+                keperluan pengecekan
+                status pendaftaran.
+              </Typography>
+            </Alert>
+          )}
+
+          {/* FORM */}
+
+          <Box
+            component="form"
+            onSubmit={
+              formik.handleSubmit
+            }
+          >
+            <Stack spacing={2.5}>
+              {/* PACKAGE */}
+
+              <FormControl
+                fullWidth
+                error={
+                  formik.touched
+                    .packageId &&
+                  Boolean(
+                    formik.errors
+                      .packageId,
+                  )
+                }
+              >
+                <InputLabel>
+                  Paket Internet
+                </InputLabel>
+
+                <Select
+                  name="packageId"
+                  value={
+                    formik.values
+                      .packageId
+                  }
+                  label="Paket Internet"
+                  onChange={
+                    formik.handleChange
+                  }
+                  onBlur={
+                    formik.handleBlur
+                  }
+                >
+                  <MenuItem value="">
+                    Pilih paket internet
+                  </MenuItem>
+
+                  {packages.map(
+                    (item) => (
+                      <MenuItem
+                        key={item.id}
+                        value={item.id}
+                      >
+                        {item.name} —{' '}
+                        {item.speed} Mbps
+                      </MenuItem>
+                    ),
+                  )}
+                </Select>
+
+                {formik.touched
+                  .packageId &&
+                  formik.errors
+                    .packageId && (
+                    <FormHelperText>
+                      {
+                        formik.errors
+                          .packageId
+                      }
+                    </FormHelperText>
+                  )}
+              </FormControl>
+
+              {/* COVERAGE */}
+
+              <FormControl
+                fullWidth
+                error={
+                  formik.touched
+                    .coverageId &&
+                  Boolean(
+                    formik.errors
+                      .coverageId,
+                  )
+                }
+              >
+                <InputLabel>
+                  Area Pemasangan
+                </InputLabel>
+
+                <Select
+                  name="coverageId"
+                  value={
+                    formik.values
+                      .coverageId
+                  }
+                  label="Area Pemasangan"
+                  onChange={
+                    formik.handleChange
+                  }
+                  onBlur={
+                    formik.handleBlur
+                  }
+                >
+                  <MenuItem value="">
+                    Pilih area pemasangan
+                  </MenuItem>
+
+                  {coverageAreas.map(
+                    (item) => (
+                      <MenuItem
+                        key={item.id}
+                        value={item.id}
+                      >
+                        {item.name}
+                      </MenuItem>
+                    ),
+                  )}
+                </Select>
+
+                {formik.touched
+                  .coverageId &&
+                  formik.errors
+                    .coverageId && (
+                    <FormHelperText>
+                      {
+                        formik.errors
+                          .coverageId
+                      }
+                    </FormHelperText>
+                  )}
+              </FormControl>
+
+              {/* NAME */}
+
+              <TextField
+                fullWidth
+                label="Nama Lengkap"
+                name="name"
+                placeholder="Masukkan nama lengkap"
+                value={
+                  formik.values.name
+                }
+                onChange={
+                  formik.handleChange
+                }
+                onBlur={
+                  formik.handleBlur
+                }
+                error={
+                  formik.touched.name &&
+                  Boolean(
+                    formik.errors.name,
+                  )
+                }
+                helperText={
+                  formik.touched.name &&
+                  formik.errors.name
+                }
+              />
+
+              {/* PHONE */}
+
+              <TextField
+                fullWidth
+                label="Nomor WhatsApp"
+                name="phone"
+                placeholder="08xxxxxxxxxx"
+                value={
+                  formik.values.phone
+                }
+                onChange={
+                  formik.handleChange
+                }
+                onBlur={
+                  formik.handleBlur
+                }
+                error={
+                  formik.touched.phone &&
+                  Boolean(
+                    formik.errors.phone,
+                  )
+                }
+                helperText={
+                  formik.touched.phone &&
+                  formik.errors.phone
+                }
+              />
+
+              {/* EMAIL */}
+
+              <TextField
+                fullWidth
+                type="email"
+                label="Email"
+                name="email"
+                placeholder="nama@email.com"
+                value={
+                  formik.values.email
+                }
+                onChange={
+                  formik.handleChange
+                }
+                onBlur={
+                  formik.handleBlur
+                }
+                error={
+                  formik.touched.email &&
+                  Boolean(
+                    formik.errors.email,
+                  )
+                }
+                helperText={
+                  formik.touched.email &&
+                  formik.errors.email
+                }
+              />
+
+              {/* ADDRESS */}
+
+              <TextField
+                fullWidth
+                multiline
+                minRows={4}
+                label="Alamat Pemasangan"
+                name="address"
+                placeholder="Masukkan alamat lengkap lokasi pemasangan"
+                value={
+                  formik.values
+                    .address
+                }
+                onChange={
+                  formik.handleChange
+                }
+                onBlur={
+                  formik.handleBlur
+                }
+                error={
+                  formik.touched
+                    .address &&
+                  Boolean(
+                    formik.errors
+                      .address,
+                  )
+                }
+                helperText={
+                  formik.touched
+                    .address &&
+                  formik.errors
+                    .address
+                }
+              />
+
+              {/* NOTES */}
+
+              <TextField
+                fullWidth
+                multiline
+                minRows={3}
+                label="Catatan Tambahan"
+                name="notes"
+                placeholder="Patokan lokasi, waktu pemasangan, atau informasi lainnya."
+                value={
+                  formik.values.notes
+                }
+                onChange={
+                  formik.handleChange
+                }
+                onBlur={
+                  formik.handleBlur
+                }
+                error={
+                  formik.touched.notes &&
+                  Boolean(
+                    formik.errors.notes,
+                  )
+                }
+                helperText={
+                  formik.touched.notes &&
+                  formik.errors.notes
+                }
+              />
+
+              {/* SUBMIT */}
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={
+                  formik.isSubmitting
+                }
+                startIcon={
+                  formik.isSubmitting ? (
+                    <CircularProgress
+                      size={20}
+                      color="inherit"
+                    />
+                  ) : (
+                    <SendRoundedIcon />
+                  )
+                }
+                sx={{
+                  minHeight: 54,
+                  borderRadius: 3,
+                  fontWeight: 800,
+                  textTransform:
+                    'none',
+                }}
+              >
+                {formik.isSubmitting
+                  ? 'Mengirim Pendaftaran...'
+                  : 'Kirim Pendaftaran'}
+              </Button>
+            </Stack>
+          </Box>
+        </Stack>
+      </Container>
+    </Box>
   );
 }
