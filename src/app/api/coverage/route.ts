@@ -136,7 +136,6 @@ export async function POST(request: Request) {
         where: {
           name: {
             equals: area,
-            mode: 'insensitive',
           },
           isActive: true,
           branch: {
