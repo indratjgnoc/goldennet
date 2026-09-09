@@ -8,6 +8,13 @@ export const SESSION_COOKIE_NAME =
 const SESSION_MAX_AGE =
   60 * 60 * 8; // 8 jam
 
+export type AppRole =
+  | 'SUPER_ADMIN'
+  | 'ADMIN'
+  | 'TEKNISI'
+  | 'CUSTOMER_SERVICE'
+  | 'FINANCE';
+
 export async function createSession(
   userId: number,
 ) {
@@ -66,10 +73,8 @@ export async function getCurrentUser() {
     return null;
   }
 
-  const prismaClient = prisma as any;
-
   const user =
-    await prismaClient.user.findUnique({
+    await prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -108,14 +113,14 @@ export async function requireAuth() {
 }
 
 export async function requireRole(
-  allowedRoles: string[],
+  allowedRoles: AppRole[],
 ) {
   const user =
     await requireAuth();
 
   if (
     !allowedRoles.includes(
-      user.role,
+      user.role as AppRole,
     )
   ) {
     throw new Error(
@@ -124,4 +129,19 @@ export async function requireRole(
   }
 
   return user;
+}
+
+export async function hasRole(
+  allowedRoles: AppRole[],
+) {
+  const user =
+    await getCurrentUser();
+
+  if (!user) {
+    return false;
+  }
+
+  return allowedRoles.includes(
+    user.role as AppRole,
+  );
 }

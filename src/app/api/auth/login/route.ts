@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
+import { verifyPassword } from '@/lib/password';
+import { createSession } from '@/lib/auth/session';
 
 import {
-  verifyPassword,
-} from '@/lib/password';
-
-import {
-  createSession,
-} from '@/lib/auth/session';
+  checkLoginRateLimit,
+  getClientIp,
+  recordLoginFailure,
+  resetLoginRateLimit,
+} from '@/lib/rate-limit';
 
 type UserRecord = {
   id: number;
@@ -24,6 +25,7 @@ type UserDbClient = {
   findUnique: (
     args: Record<string, unknown>,
   ) => Promise<UserRecord | null>;
+
   update: (
     args: Record<string, unknown>,
   ) => Promise<UserRecord>;
@@ -37,18 +39,24 @@ export async function POST(
   request: Request,
 ) {
   try {
+    // =====================================================
+    // 1. Parse request body
+    // =====================================================
+
     const body =
       await request.json();
 
+    // =====================================================
+    // 2. Validate input
+    // =====================================================
+
     const username =
-      typeof body.username ===
-      'string'
+      typeof body.username === 'string'
         ? body.username.trim()
         : '';
 
     const password =
-      typeof body.password ===
-      'string'
+      typeof body.password === 'string'
         ? body.password
         : '';
 
@@ -65,6 +73,43 @@ export async function POST(
       );
     }
 
+    // =====================================================
+    // 3. Rate limit check
+    // =====================================================
+
+    const clientIp =
+      getClientIp(request);
+
+    const rateLimitKey =
+      `${clientIp}:${username}`;
+
+    const rateLimit =
+      checkLoginRateLimit(
+        rateLimitKey,
+      );
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            'Terlalu banyak percobaan login. Silakan coba lagi nanti.',
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(
+              rateLimit.retryAfterSeconds,
+            ),
+          },
+        },
+      );
+    }
+
+    // =====================================================
+    // 4. Find user
+    // =====================================================
+
     const user =
       await db.user.findUnique({
         where: {
@@ -72,7 +117,15 @@ export async function POST(
         },
       });
 
+    // =====================================================
+    // 5. User tidak ditemukan
+    // =====================================================
+
     if (!user) {
+      recordLoginFailure(
+        rateLimitKey,
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -84,6 +137,10 @@ export async function POST(
         },
       );
     }
+
+    // =====================================================
+    // 6. Check account status
+    // =====================================================
 
     if (
       user.status !== 'ACTIVE'
@@ -100,13 +157,25 @@ export async function POST(
       );
     }
 
+    // =====================================================
+    // 7. Verify password
+    // =====================================================
+
     const passwordValid =
       await verifyPassword(
         password,
         user.passwordHash,
       );
 
+    // =====================================================
+    // 8. Password salah
+    // =====================================================
+
     if (!passwordValid) {
+      recordLoginFailure(
+        rateLimitKey,
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -119,20 +188,39 @@ export async function POST(
       );
     }
 
+    // =====================================================
+    // 9. Login berhasil
+    // =====================================================
+
+    resetLoginRateLimit(
+      rateLimitKey,
+    );
+
+    // =====================================================
+    // 10. Update last login
+    // =====================================================
+
     await db.user.update({
       where: {
         id: user.id,
       },
 
       data: {
-        lastLoginAt:
-          new Date(),
+        lastLoginAt: new Date(),
       },
     });
+
+    // =====================================================
+    // 11. Create session
+    // =====================================================
 
     await createSession(
       user.id,
     );
+
+    // =====================================================
+    // 12. Response
+    // =====================================================
 
     return NextResponse.json({
       success: true,

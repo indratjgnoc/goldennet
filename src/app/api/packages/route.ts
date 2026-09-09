@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
@@ -8,6 +9,7 @@ export async function GET() {
         where: {
           isActive: true,
         },
+
         orderBy: [
           {
             isPopular: 'desc',
@@ -16,6 +18,7 @@ export async function GET() {
             speed: 'asc',
           },
         ],
+
         select: {
           id: true,
           name: true,
@@ -28,15 +31,30 @@ export async function GET() {
       });
 
     const data = packages.map((item) => ({
-      ...item,
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      speed: item.speed,
       price: Number(item.price),
+      description: item.description,
+      isPopular: item.isPopular,
     }));
 
-    return NextResponse.json({
-      success: true,
-      message: 'Data paket berhasil diambil.',
-      data,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message:
+          'Data paket berhasil diambil.',
+        data,
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control':
+            'public, max-age=60, s-maxage=60',
+        },
+      },
+    );
   } catch (error) {
     console.error(
       'GET /api/packages error:',
@@ -46,7 +64,9 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
-        message: 'Gagal mengambil data paket.',
+        message:
+          'Gagal mengambil data paket.',
+        data: null,
       },
       {
         status: 500,
