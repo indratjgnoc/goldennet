@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword } from '@/lib/password';
 import { createSession } from '@/lib/auth/session';
+import { createAuditLog } from '@/lib/audit-log';
 
 import {
   checkLoginRateLimit,
@@ -218,6 +219,16 @@ export async function POST(
       user.id,
     );
 
+    await createAuditLog({
+      userId: user.id,
+      action: 'LOGIN',
+      entity: 'User',
+      entityId: user.id,
+      description: `User ${user.username} berhasil login.`,
+      ipAddress: clientIp,
+      userAgent:
+        request.headers.get('user-agent'),
+    });
     // =====================================================
     // 12. Response
     // =====================================================

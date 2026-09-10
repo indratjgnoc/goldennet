@@ -2,6 +2,7 @@
 
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Container,
@@ -14,6 +15,8 @@ import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import PendingActionsRoundedIcon from '@mui/icons-material/PendingActionsRounded';
 import RouterRoundedIcon from '@mui/icons-material/RouterRounded';
 import WifiRoundedIcon from '@mui/icons-material/WifiRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { useRouter } from 'next/navigation';
 
 type DashboardUser = {
   id: number;
@@ -57,6 +60,39 @@ export default function DashboardContent({
 }: {
   user: DashboardUser;
 }) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    try {
+      const response = await fetch(
+        '/api/auth/logout',
+        {
+          method: 'POST',
+        },
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        router.push('/gnet-console/login');
+      } else {
+        alert(
+          result.message ||
+            'Logout gagal.',
+        );
+      }
+    } catch (error) {
+      console.error(
+        'LOGOUT ERROR:',
+        error,
+      );
+
+      alert(
+        'Terjadi kesalahan saat logout.',
+      );
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -71,53 +107,100 @@ export default function DashboardContent({
         <Stack spacing={4}>
 
           {/* HEADER */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: {
+                xs: 'column',
+                md: 'row',
+              },
+              justifyContent: 'space-between',
+              alignItems: {
+                xs: 'stretch',
+                md: 'flex-start',
+              },
+              gap: 3,
+            }}
+          >
+            <Stack spacing={1}>
+              <Typography
+                variant="overline"
+                sx={{
+                  fontWeight: 900,
+                  letterSpacing: 2,
+                }}
+              >
+                GOLDEN NET
+              </Typography>
 
-          <Stack spacing={1}>
-            <Typography
-              variant="overline"
-              sx={{
-                fontWeight: 900,
-                letterSpacing: 2,
-              }}
-            >
-              GOLDEN NET
-            </Typography>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 900,
+                  fontSize: {
+                    xs: '2rem',
+                    md: '3rem',
+                  },
+                }}
+              >
+                Operations Console
+              </Typography>
 
-            <Typography
-              variant="h3"
+              <Typography color="text.secondary">
+                Monitoring dan pengelolaan
+                operasional jaringan Golden Net.
+              </Typography>
+
+              {/* USER SESSION */}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  mt: 1,
+                }}
+              >
+                Login sebagai{' '}
+                <strong>{user.name}</strong>{' '}
+                ({user.role})
+              </Typography>
+            </Stack>
+
+            {/* LOGOUT BUTTON */}
+            <Button
+              variant="outlined"
+              startIcon={<LogoutRoundedIcon />}
+              onClick={handleLogout}
               sx={{
-                fontWeight: 900,
-                fontSize: {
-                  xs: '2rem',
-                  md: '3rem',
+                minWidth: 130,
+                height: 44,
+                borderRadius: 2.5,
+                alignSelf: {
+                  xs: 'flex-start',
+                  md: 'flex-start',
+                },
+                fontWeight: 800,
+                textTransform: 'none',
+                borderColor:
+                  'rgba(255,255,255,0.16)',
+                color: 'text.secondary',
+                transition:
+                  'all 0.2s ease',
+                '&:hover': {
+                  borderColor:
+                    'rgba(244,67,54,0.6)',
+                  color: '#ff5252',
+                  background:
+                    'rgba(244,67,54,0.08)',
+                  transform:
+                    'translateY(-1px)',
                 },
               }}
             >
-              Operations Console
-            </Typography>
-
-            <Typography color="text.secondary">
-              Monitoring dan pengelolaan
-              operasional jaringan Golden Net.
-            </Typography>
-
-            {/* USER SESSION */}
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                mt: 1,
-              }}
-            >
-              Login sebagai{' '}
-              <strong>{user.name}</strong>{' '}
-              ({user.role})
-            </Typography>
-          </Stack>
+              Logout
+            </Button>
+          </Box>
 
           {/* STATISTICS */}
-
           <Grid
             container
             spacing={2}
@@ -136,10 +219,8 @@ export default function DashboardContent({
                   sx={{
                     height: '100%',
                     borderRadius: 4,
-
                     border:
                       '1px solid rgba(255,255,255,0.08)',
-
                     background:
                       'rgba(255,255,255,0.025)',
                   }}
@@ -154,13 +235,10 @@ export default function DashboardContent({
                         sx={{
                           width: 48,
                           height: 48,
-
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-
                           borderRadius: 2.5,
-
                           background:
                             'rgba(46,125,50,0.14)',
                         }}
@@ -200,15 +278,12 @@ export default function DashboardContent({
           </Grid>
 
           {/* MAIN CONTENT */}
-
           <Card
             elevation={0}
             sx={{
               borderRadius: 4,
-
               border:
                 '1px solid rgba(255,255,255,0.08)',
-
               background:
                 'rgba(255,255,255,0.025)',
             }}
