@@ -40,17 +40,12 @@ export async function POST(
   request: Request,
 ) {
   try {
-    // =====================================================
-    // 1. Parse request body
-    // =====================================================
 
+    // 1. Parse request body
     const body =
       await request.json();
 
-    // =====================================================
-    // 2. Validate input
-    // =====================================================
-
+    // 2. Validate input   
     const username =
       typeof body.username === 'string'
         ? body.username.trim()
@@ -74,10 +69,7 @@ export async function POST(
       );
     }
 
-    // =====================================================
     // 3. Rate limit check
-    // =====================================================
-
     const clientIp =
       getClientIp(request);
 
@@ -107,10 +99,7 @@ export async function POST(
       );
     }
 
-    // =====================================================
-    // 4. Find user
-    // =====================================================
-
+    // 4. Find user  
     const user =
       await db.user.findUnique({
         where: {
@@ -118,10 +107,7 @@ export async function POST(
         },
       });
 
-    // =====================================================
-    // 5. User tidak ditemukan
-    // =====================================================
-
+    // 5. User tidak ditemukan   
     if (!user) {
       recordLoginFailure(
         rateLimitKey,
@@ -139,10 +125,7 @@ export async function POST(
       );
     }
 
-    // =====================================================
     // 6. Check account status
-    // =====================================================
-
     if (
       user.status !== 'ACTIVE'
     ) {
@@ -158,20 +141,14 @@ export async function POST(
       );
     }
 
-    // =====================================================
-    // 7. Verify password
-    // =====================================================
-
+    // 7. Verify password 
     const passwordValid =
       await verifyPassword(
         password,
         user.passwordHash,
       );
 
-    // =====================================================
     // 8. Password salah
-    // =====================================================
-
     if (!passwordValid) {
       recordLoginFailure(
         rateLimitKey,
@@ -189,19 +166,13 @@ export async function POST(
       );
     }
 
-    // =====================================================
     // 9. Login berhasil
-    // =====================================================
-
-    resetLoginRateLimit(
+   resetLoginRateLimit(
       rateLimitKey,
     );
 
-    // =====================================================
     // 10. Update last login
-    // =====================================================
-
-    await db.user.update({
+   await db.user.update({
       where: {
         id: user.id,
       },
@@ -211,10 +182,7 @@ export async function POST(
       },
     });
 
-    // =====================================================
     // 11. Create session
-    // =====================================================
-
     await createSession(
       user.id,
     );
@@ -229,10 +197,8 @@ export async function POST(
       userAgent:
         request.headers.get('user-agent'),
     });
-    // =====================================================
-    // 12. Response
-    // =====================================================
 
+    // 12. Response
     return NextResponse.json({
       success: true,
 
