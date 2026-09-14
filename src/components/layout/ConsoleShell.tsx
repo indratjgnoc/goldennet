@@ -11,6 +11,7 @@ import {
   Settings,
   Wifi,
   Close,
+  Subscriptions,
 } from '@mui/icons-material';
 
 import {
@@ -61,6 +62,11 @@ const menuItems = [
     label: 'Paket Internet',
     href: '/gnet-console/packages',
     icon: <Wifi />,
+  },
+  {
+    label: 'Subscription',
+    href: '/gnet-console/subscriptions',
+    icon: <Subscriptions />,
   },
   {
     label: 'Cabang',
