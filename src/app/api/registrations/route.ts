@@ -1,7 +1,6 @@
 import { randomInt } from 'node:crypto';
-
 import { NextResponse } from 'next/server';
-
+import { getCurrentUser } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 
 interface RegistrationRequest {
@@ -830,6 +829,266 @@ export async function POST(
       {
         status: 500,
       },
+    );
+  }
+}
+
+/**
+ * GET /api/registrations
+ *
+ * Admin endpoint untuk mengambil daftar pendaftaran.
+ *
+ * Query:
+ * - search
+ * - status
+ * - branchId
+ * - packageId
+ */
+export async function GET(request: Request) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Unauthorized.',
+      },
+      { status: 401 },
+    );
+  }
+
+  const allowedRoles = [
+    'SUPER_ADMIN',
+    'ADMIN',
+    'CUSTOMER_SERVICE',
+    'TEKNISI',
+  ];
+
+  if (!allowedRoles.includes(user.role)) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Anda tidak memiliki akses.',
+      },
+      { status: 403 },
+    );
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+
+    const search =
+      searchParams.get('search')?.trim() || '';
+
+    const status =
+      searchParams.get('status')?.trim() || '';
+
+    const branchIdParam =
+      searchParams.get('branchId')?.trim() || '';
+
+    const packageIdParam =
+      searchParams.get('packageId')?.trim() || '';
+
+    const branchId = branchIdParam
+      ? Number(branchIdParam)
+      : undefined;
+
+    const packageId = packageIdParam
+      ? Number(packageIdParam)
+      : undefined;
+
+    if (
+      branchIdParam &&
+      (!Number.isInteger(branchId) || branchId! <= 0)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Branch ID tidak valid.',
+        },
+        { status: 400 },
+      );
+    }
+
+    if (
+      packageIdParam &&
+      (!Number.isInteger(packageId) || packageId! <= 0)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Package ID tidak valid.',
+        },
+        { status: 400 },
+      );
+    }
+
+    const validStatuses = [
+      'PENDING',
+      'SURVEY',
+      'APPROVED',
+      'INSTALLATION',
+      'COMPLETED',
+      'REJECTED',
+      'CANCELLED',
+    ];
+
+    if (status && !validStatuses.includes(status)) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Status pendaftaran tidak valid.',
+        },
+        { status: 400 },
+      );
+    }
+
+    const registrations =
+      await prisma.registration.findMany({
+        where: {
+          ...(status
+            ? {
+                status: status as
+                  | 'PENDING'
+                  | 'SURVEY'
+                  | 'APPROVED'
+                  | 'INSTALLATION'
+                  | 'COMPLETED'
+                  | 'REJECTED'
+                  | 'CANCELLED',
+              }
+            : {}),
+
+          ...(branchId
+            ? {
+                branchId,
+              }
+            : {}),
+
+          ...(packageId
+            ? {
+                packageId,
+              }
+            : {}),
+
+          ...(search
+            ? {
+                OR: [
+                  {
+                    registrationCode: {
+                      contains: search,
+                    },
+                  },
+                  {
+                    name: {
+                      contains: search,
+                    },
+                  },
+                  {
+                    phone: {
+                      contains: search,
+                    },
+                  },
+                  {
+                    email: {
+                      contains: search,
+                    },
+                  },
+                ],
+              }
+            : {}),
+        },
+
+        orderBy: {
+          createdAt: 'desc',
+        },
+
+        include: {
+          package: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              speed: true,
+              price: true,
+              isPopular: true,
+            },
+          },
+
+          branch: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+            },
+          },
+
+          customer: {
+            select: {
+              id: true,
+              customerCode: true,
+              name: true,
+              phone: true,
+              status: true,
+            },
+          },
+        },
+      });
+
+    return NextResponse.json({
+      success: true,
+      data: registrations.map((registration) => ({
+        id: registration.id,
+        registrationCode:
+          registration.registrationCode,
+        name: registration.name,
+        phone: registration.phone,
+        email: registration.email,
+        address: registration.address,
+        notes: registration.notes,
+        status: registration.status,
+
+        customerId:
+          registration.customerId,
+
+        package: registration.package
+          ? {
+              id: registration.package.id,
+              name: registration.package.name,
+              code: registration.package.code,
+              speed: registration.package.speed,
+              price: Number(
+                registration.package.price,
+              ),
+              isPopular:
+                registration.package.isPopular,
+            }
+          : null,
+
+        branch: registration.branch,
+
+        customer: registration.customer,
+
+        createdAt:
+          registration.createdAt.toISOString(),
+
+        updatedAt:
+          registration.updatedAt.toISOString(),
+      })),
+    });
+  } catch (error) {
+    console.error(
+      'GET /api/registrations error:',
+      error,
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          'Gagal mengambil data pendaftaran.',
+      },
+      { status: 500 },
     );
   }
 }

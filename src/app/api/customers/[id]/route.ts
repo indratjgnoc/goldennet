@@ -1,61 +1,101 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-import { requireRole } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { createAuditLog } from '@/lib/audit';
 
-type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+const ALLOWED_ROLES = [
+  'SUPER_ADMIN',
+  'ADMIN',
+  'CUSTOMER_SERVICE',
+];
 
+const VALID_STATUSES = [
+  'PROSPECT',
+  'ACTIVE',
+  'SUSPENDED',
+  'INACTIVE',
+] as const;
+
+function unauthorized() {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Unauthorized',
+    },
+    { status: 401 }
+  );
+}
+
+function forbidden() {
+  return NextResponse.json(
+    {
+      success: false,
+      message: 'Kamu tidak memiliki akses untuk melakukan tindakan ini.',
+    },
+    { status: 403 }
+  );
+}
+
+function badRequest(message: string) {
+  return NextResponse.json(
+    {
+      success: false,
+      message,
+    },
+    { status: 400 }
+  );
+}
+
+/**
+ * GET /api/customers/[id]
+ * Detail customer
+ */
 export async function GET(
   _request: NextRequest,
-  context: RouteContext,
+  context: { params: Promise<{ id: string }> }
 ) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorized();
+  }
+
+  if (!ALLOWED_ROLES.includes(user.role)) {
+    return forbidden();
+  }
+
+  const { id } = await context.params;
+  const customerId = Number(id);
+
+  if (!Number.isInteger(customerId) || customerId <= 0) {
+    return badRequest('ID customer tidak valid.');
+  }
+
   try {
-    await requireRole([
-      'SUPER_ADMIN',
-      'ADMIN',
-      'CUSTOMER_SERVICE',
-      'TEKNISI',
-      'FINANCE',
-    ]);
-
-    const { id } = await context.params;
-    const customerId = Number(id);
-
-    if (!Number.isInteger(customerId)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'ID customer tidak valid.',
-        },
-        { status: 400 },
-      );
-    }
-
     const customer = await prisma.customer.findUnique({
       where: {
         id: customerId,
       },
       include: {
         branch: true,
+
         registrations: {
-          include: {
-            package: true,
-          },
           orderBy: {
             createdAt: 'desc',
+          },
+          take: 10,
+          include: {
+            package: true,
           },
         },
+
         subscriptions: {
-          include: {
-            package: true,
-          },
           orderBy: {
             createdAt: 'desc',
+          },
+          take: 10,
+          include: {
+            package: true,
           },
         },
       },
@@ -67,7 +107,7 @@ export async function GET(
           success: false,
           message: 'Customer tidak ditemukan.',
         },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -76,283 +116,302 @@ export async function GET(
       data: customer,
     });
   } catch (error) {
-    console.error('GET CUSTOMER ERROR:', error);
-
-    if (
-      error instanceof Error &&
-      error.message === 'UNAUTHORIZED'
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Unauthorized.',
-        },
-        { status: 401 },
-      );
-    }
-
-    if (
-      error instanceof Error &&
-      error.message === 'FORBIDDEN'
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Akses ditolak.',
-        },
-        { status: 403 },
-      );
-    }
+    console.error('GET CUSTOMER DETAIL ERROR:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message: 'Gagal mengambil customer.',
+        message: 'Terjadi kesalahan saat mengambil data customer.',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
+/**
+ * PATCH /api/customers/[id]
+ * Update customer
+ */
 export async function PATCH(
   request: NextRequest,
-  context: RouteContext,
+  context: { params: Promise<{ id: string }> }
 ) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorized();
+  }
+
+  if (!ALLOWED_ROLES.includes(user.role)) {
+    return forbidden();
+  }
+
+  const { id } = await context.params;
+  const customerId = Number(id);
+
+  if (!Number.isInteger(customerId) || customerId <= 0) {
+    return badRequest('ID customer tidak valid.');
+  }
+
   try {
-    const user = await requireRole([
-      'SUPER_ADMIN',
-      'ADMIN',
-      'CUSTOMER_SERVICE',
-    ]);
-
-    const { id } = await context.params;
-    const customerId = Number(id);
-
-    if (!Number.isInteger(customerId)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'ID customer tidak valid.',
-        },
-        { status: 400 },
-      );
-    }
-
-    const existing = await prisma.customer.findUnique({
+    const existingCustomer = await prisma.customer.findUnique({
       where: {
         id: customerId,
       },
     });
 
-    if (!existing) {
+    if (!existingCustomer) {
       return NextResponse.json(
         {
           success: false,
           message: 'Customer tidak ditemukan.',
         },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
     const body = await request.json();
 
+    const {
+      customerCode,
+      name,
+      phone,
+      email,
+      address,
+      status,
+      branchId,
+    } = body;
+
     const data: {
+      customerCode?: string;
       name?: string;
       phone?: string;
       email?: string | null;
       address?: string;
-      status?:
-        | 'PROSPECT'
-        | 'ACTIVE'
-        | 'SUSPENDED'
-        | 'INACTIVE';
+      status?: (typeof VALID_STATUSES)[number];
       branchId?: number | null;
     } = {};
 
-    if (body.name !== undefined) {
-      const name = String(body.name).trim();
-
-      if (!name) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Nama customer tidak boleh kosong.',
-          },
-          { status: 400 },
-        );
-      }
-
-      data.name = name;
-    }
-
-    if (body.phone !== undefined) {
-      const phone = String(body.phone).trim();
-
-      if (!phone) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Nomor telepon tidak boleh kosong.',
-          },
-          { status: 400 },
-        );
-      }
-
-      data.phone = phone;
-    }
-
-    if (body.email !== undefined) {
-      data.email = body.email
-        ? String(body.email).trim()
-        : null;
-    }
-
-    if (body.address !== undefined) {
-      const address = String(body.address).trim();
-
-      if (!address) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Alamat tidak boleh kosong.',
-          },
-          { status: 400 },
-        );
-      }
-
-      data.address = address;
-    }
-
-    if (body.status !== undefined) {
-      const status = String(body.status);
-
+    if (customerCode !== undefined) {
       if (
-        ![
-          'PROSPECT',
-          'ACTIVE',
-          'SUSPENDED',
-          'INACTIVE',
-        ].includes(status)
+        typeof customerCode !== 'string' ||
+        !customerCode.trim()
       ) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Status customer tidak valid.',
-          },
-          { status: 400 },
-        );
+        return badRequest('Kode customer tidak boleh kosong.');
       }
 
-      data.status = status as
-        | 'PROSPECT'
-        | 'ACTIVE'
-        | 'SUSPENDED'
-        | 'INACTIVE';
+      const normalizedCode = customerCode.trim();
+
+      const duplicate = await prisma.customer.findFirst({
+        where: {
+          customerCode: normalizedCode,
+          NOT: {
+            id: customerId,
+          },
+        },
+      });
+
+      if (duplicate) {
+        return badRequest('Kode customer sudah digunakan.');
+      }
+
+      data.customerCode = normalizedCode;
     }
 
-    if (body.branchId !== undefined) {
+    if (name !== undefined) {
+      if (typeof name !== 'string' || !name.trim()) {
+        return badRequest('Nama customer tidak boleh kosong.');
+      }
+
+      data.name = name.trim();
+    }
+
+    if (phone !== undefined) {
+      if (typeof phone !== 'string' || !phone.trim()) {
+        return badRequest('Nomor telepon tidak boleh kosong.');
+      }
+
+      data.phone = phone.trim();
+    }
+
+    if (email !== undefined) {
+      if (email === null || email === '') {
+        data.email = null;
+      } else if (typeof email === 'string') {
+        data.email = email.trim().toLowerCase();
+      } else {
+        return badRequest('Format email tidak valid.');
+      }
+    }
+
+    if (address !== undefined) {
+      if (typeof address !== 'string' || !address.trim()) {
+        return badRequest('Alamat customer tidak boleh kosong.');
+      }
+
+      data.address = address.trim();
+    }
+
+    if (status !== undefined) {
       if (
-        body.branchId === null ||
-        body.branchId === ''
+        typeof status !== 'string' ||
+        !VALID_STATUSES.includes(
+          status as (typeof VALID_STATUSES)[number]
+        )
       ) {
+        return badRequest('Status customer tidak valid.');
+      }
+
+      data.status = status as (typeof VALID_STATUSES)[number];
+    }
+
+    if (branchId !== undefined) {
+      if (branchId === null || branchId === '') {
         data.branchId = null;
       } else {
-        const branchId = Number(body.branchId);
+        const parsedBranchId = Number(branchId);
 
-        if (!Number.isInteger(branchId)) {
-          return NextResponse.json(
-            {
-              success: false,
-              message: 'Branch tidak valid.',
-            },
-            { status: 400 },
-          );
+        if (
+          !Number.isInteger(parsedBranchId) ||
+          parsedBranchId <= 0
+        ) {
+          return badRequest('Branch ID tidak valid.');
         }
 
         const branch = await prisma.branch.findUnique({
           where: {
-            id: branchId,
+            id: parsedBranchId,
           },
         });
 
         if (!branch) {
-          return NextResponse.json(
-            {
-              success: false,
-              message: 'Branch tidak ditemukan.',
-            },
-            { status: 400 },
-          );
+          return badRequest('Branch tidak ditemukan.');
         }
 
-        data.branchId = branchId;
+        data.branchId = parsedBranchId;
       }
+    }
+
+    if (Object.keys(data).length === 0) {
+      return badRequest('Tidak ada data yang diubah.');
+    }
+
+    const updatedCustomer = await prisma.customer.update({
+      where: {
+        id: customerId,
+      },
+      data,
+      include: {
+        branch: true,
+      },
+    });
+
+    await createAuditLog({
+      userId: user.id,
+      action: 'UPDATE',
+      entity: 'CUSTOMER',
+      entityId: customerId,
+      description: `Memperbarui customer ${updatedCustomer.customerCode} - ${updatedCustomer.name}`,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Data customer berhasil diperbarui.',
+      data: updatedCustomer,
+    });
+  } catch (error) {
+    console.error('UPDATE CUSTOMER ERROR:', error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Terjadi kesalahan saat memperbarui customer.',
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/customers/[id]
+ *
+ * Soft delete:
+ * Customer tidak benar-benar dihapus.
+ * Status diubah menjadi INACTIVE.
+ */
+export async function DELETE(
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return unauthorized();
+  }
+
+  if (!ALLOWED_ROLES.includes(user.role)) {
+    return forbidden();
+  }
+
+  const { id } = await context.params;
+  const customerId = Number(id);
+
+  if (!Number.isInteger(customerId) || customerId <= 0) {
+    return badRequest('ID customer tidak valid.');
+  }
+
+  try {
+    const existingCustomer = await prisma.customer.findUnique({
+      where: {
+        id: customerId,
+      },
+    });
+
+    if (!existingCustomer) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Customer tidak ditemukan.',
+        },
+        { status: 404 }
+      );
+    }
+
+    if (existingCustomer.status === 'INACTIVE') {
+      return badRequest('Customer sudah berstatus inactive.');
     }
 
     const customer = await prisma.customer.update({
       where: {
         id: customerId,
       },
-      data,
-      include: {
-        branch: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-          },
-        },
+      data: {
+        status: 'INACTIVE',
       },
     });
 
     await createAuditLog({
       userId: user.id,
-      action: 'UPDATE_CUSTOMER',
-      entity: 'Customer',
-      entityId: customer.id,
-      description: `Customer ${customer.customerCode} diperbarui.`,
+      action: 'SOFT_DELETE',
+      entity: 'CUSTOMER',
+      entityId: customerId,
+      description: `Menonaktifkan customer ${customer.customerCode} - ${customer.name}`,
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Customer berhasil diperbarui.',
+      message: 'Customer berhasil dinonaktifkan.',
       data: customer,
     });
   } catch (error) {
-    console.error('UPDATE CUSTOMER ERROR:', error);
-
-    if (
-      error instanceof Error &&
-      error.message === 'UNAUTHORIZED'
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Unauthorized.',
-        },
-        { status: 401 },
-      );
-    }
-
-    if (
-      error instanceof Error &&
-      error.message === 'FORBIDDEN'
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Akses ditolak.',
-        },
-        { status: 403 },
-      );
-    }
+    console.error('DELETE CUSTOMER ERROR:', error);
 
     return NextResponse.json(
       {
         success: false,
-        message: 'Gagal memperbarui customer.',
+        message: 'Terjadi kesalahan saat menonaktifkan customer.',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
