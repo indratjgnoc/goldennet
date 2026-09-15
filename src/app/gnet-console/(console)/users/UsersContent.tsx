@@ -439,7 +439,7 @@ export default function UsersContent({ user, initialUsers = [] }: Props) {
                   mt: 0.5,
                 }}
               >
-                Kelola akun dan hak akses pengguna Golden Net
+                Kelola akun dan hak akses pengguna Fiandra Net
               </Typography>
             </Box>
           </Box>
@@ -1129,7 +1129,7 @@ export default function UsersContent({ user, initialUsers = [] }: Props) {
               >
                 {editingUser
                   ? "Perbarui informasi dan hak akses user."
-                  : "Buat akun baru untuk sistem Golden Net."}
+                  : "Buat akun baru untuk sistem Fiandra Net."}
               </Typography>
             </Box>
 

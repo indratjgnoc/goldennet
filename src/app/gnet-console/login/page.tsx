@@ -44,14 +44,6 @@ export default function GnetConsoleLoginPage() {
     try {
       setLoading(true);
 
-      /*
-       * Untuk tahap ini kita siapkan
-       * struktur login terlebih dahulu.
-       *
-       * Authentication database akan kita
-       * pasang pada tahap berikutnya.
-       */
-
       const response = await fetch(
         '/api/auth/login',
         {
@@ -178,14 +170,14 @@ export default function GnetConsoleLoginPage() {
                 variant="h5"
                 sx={{ fontWeight: 900 }}
               >
-                GNET Console
+                FNET Console
               </Typography>
 
               <Typography
                 variant="body2"
                 color="text.secondary"
               >
-                Portal internal Golden Net
+                Portal Internal Fiandra Net
               </Typography>
             </Stack>
 
@@ -241,7 +233,7 @@ export default function GnetConsoleLoginPage() {
             >
               {loading
                 ? 'Memproses...'
-                : 'Masuk Console'}
+                : 'Open Console'}
             </Button>
           </Stack>
         </Paper>

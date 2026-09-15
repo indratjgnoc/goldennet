@@ -161,7 +161,7 @@ export default function ConsoleShell({ user, children }: Props) {
               color: "#fff",
             }}
           >
-            GOLDEN
+            FIANDRA
             <Box
               component="span"
               sx={{

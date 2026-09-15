@@ -1274,36 +1274,40 @@ export default function StockOutPage() {
                       isOptionEqualToValue={(option, value) =>
                         option.id === value.id
                       }
-                      renderOption={(props, option) => (
-                        <Box
-                          component="li"
-                          {...props}
-                          key={option.id}
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "flex-start !important",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              fontWeight: 700,
-                            }}
-                          >
-                            {option.name}
-                          </Typography>
+                      renderOption={(props, option) => {
+                        const { key, ...optionProps } = props;
 
-                          <Typography
+                        return (
+                          <Box
+                            component="li"
+                            key={key}
+                            {...optionProps}
                             sx={{
-                              fontSize: 11,
-                              color: "rgba(255,255,255,.45)",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "flex-start !important",
                             }}
                           >
-                            {option.code} • Stok {formatNumber(option.stock)}{" "}
-                            {option.unit}
-                          </Typography>
-                        </Box>
-                      )}
+                            <Typography
+                              sx={{
+                                fontWeight: 700,
+                              }}
+                            >
+                              {option.name}
+                            </Typography>
+
+                            <Typography
+                              sx={{
+                                fontSize: 11,
+                                color: "rgba(255,255,255,.45)",
+                              }}
+                            >
+                              {option.code} • Stok {formatNumber(option.stock)}{" "}
+                              {option.unit}
+                            </Typography>
+                          </Box>
+                        );
+                      }}
                       renderInput={(params) => (
                         <TextField
                           {...params}

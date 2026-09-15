@@ -510,7 +510,7 @@ export default function InventoryItemsPage() {
                 fontSize: 14,
               }}
             >
-              Kelola perangkat WiFi dan material instalasi Golden Net.
+              Kelola perangkat WiFi dan material instalasi Fiandra Net.
             </Typography>
           </Box>
 

@@ -382,7 +382,7 @@ export default function PackagesContent() {
                 mb: 1,
               }}
             >
-              GOLDEN NET / PRODUCT MANAGEMENT
+              FIANDRA NET / PRODUCT MANAGEMENT
             </Typography>
 
             <Typography
@@ -405,7 +405,7 @@ export default function PackagesContent() {
                 fontSize: 14,
               }}
             >
-              Kelola produk dan layanan internet Golden Net.
+              Kelola produk dan layanan internet Fiandra Net.
             </Typography>
           </Box>
 
@@ -790,7 +790,7 @@ export default function PackagesContent() {
                       color: "rgba(255,255,255,0.48)",
                     }}
                   >
-                    {item.description || "Paket internet Golden Net."}
+                    {item.description || "Paket internet Fiandra Net."}
                   </Typography>
 
                   <Box

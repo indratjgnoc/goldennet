@@ -645,7 +645,7 @@ export default function RegistrationsContent({
               mb: 0.8,
             }}
           >
-            GOLDEN NET / REGISTRATION
+            FIANDRA NET / REGISTRATION
             MANAGEMENT
           </Typography>
 
@@ -672,7 +672,7 @@ export default function RegistrationsContent({
             }}
           >
             Kelola calon pelanggan dan
-            proses pemasangan Golden Net.
+            proses pemasangan Fiandra Net.
           </Typography>
         </Box>
 
@@ -1242,7 +1242,7 @@ export default function RegistrationsContent({
                 'rgba(148,163,184,0.45)',
             }}
           >
-            Golden Net Management System
+            Fiandra Net Management System
           </Typography>
 
           <Typography

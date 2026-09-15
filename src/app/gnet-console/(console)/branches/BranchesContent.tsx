@@ -554,7 +554,7 @@ export default function BranchesContent({
                 mb: 0.5,
               }}
             >
-              GOLDEN NET / BRANCH MANAGEMENT
+              FIANDRA NET / BRANCH MANAGEMENT
             </Typography>
 
             <Typography
@@ -579,7 +579,7 @@ export default function BranchesContent({
               }}
             >
               Kelola cabang operasional dan
-              cakupan layanan Golden Net.
+              cakupan layanan Fiandra Net.
             </Typography>
           </Box>
 
@@ -1069,7 +1069,7 @@ export default function BranchesContent({
             >
               {editingBranch
                 ? `Mengubah ${editingBranch.code}`
-                : "Tambahkan cabang operasional Golden Net"}
+                : "Tambahkan cabang operasional Fiandra Net"}
             </Typography>
           </Box>
 

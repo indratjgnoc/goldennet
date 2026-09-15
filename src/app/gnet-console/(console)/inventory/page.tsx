@@ -309,7 +309,7 @@ export default function InventoryPage() {
                 fontSize: 14,
               }}
             >
-              Manajemen perangkat, material, stok dan pemasangan Golden Net.
+              Manajemen perangkat, material, stok dan pemasangan Fiandra Net.
             </Typography>
           </Box>
 

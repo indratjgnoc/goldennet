@@ -563,7 +563,7 @@ export default function SubscriptionContent() {
               mb: 1,
             }}
           >
-            GOLDEN NET / CUSTOMER MANAGEMENT
+            FIANDRA NET / CUSTOMER MANAGEMENT
           </Typography>
 
           <Typography
@@ -583,7 +583,7 @@ export default function SubscriptionContent() {
               fontSize: 14,
             }}
           >
-            Kelola layanan internet aktif pelanggan Golden Net
+            Kelola layanan internet aktif pelanggan Fiandra Net
           </Typography>
         </Box>
 

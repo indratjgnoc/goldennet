@@ -456,7 +456,7 @@ export default function CoverageAreasContent() {
               mb: 0.8,
             }}
           >
-            GOLDEN NET / NETWORK MANAGEMENT
+            FIANDRA NET / NETWORK MANAGEMENT
           </Typography>
 
           <Typography
@@ -480,7 +480,7 @@ export default function CoverageAreasContent() {
               fontSize: 14,
             }}
           >
-            Kelola wilayah layanan internet Golden Net berdasarkan cabang.
+            Kelola wilayah layanan internet Fiandra Net berdasarkan cabang.
           </Typography>
         </Box>
 
@@ -1168,7 +1168,7 @@ export default function CoverageAreasContent() {
                 mt: 0.5,
               }}
             >
-              Tentukan wilayah layanan Golden Net.
+              Tentukan wilayah layanan Fiandra Net.
             </Typography>
           </Box>
 

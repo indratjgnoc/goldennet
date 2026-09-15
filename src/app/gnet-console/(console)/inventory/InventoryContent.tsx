@@ -310,7 +310,7 @@ export default function InventoryContent({ user, initialStats }: Props) {
               }}
             >
               Pusat pengelolaan perangkat WiFi, material instalasi, transaksi
-              gudang, supplier, stok, dan pemasangan Golden Net.
+              gudang, supplier, stok, dan pemasangan Fiandra Net.
             </Typography>
           </Box>
 
@@ -641,7 +641,7 @@ export default function InventoryContent({ user, initialStats }: Props) {
                   fontSize: 13,
                 }}
               >
-                Akses seluruh fitur pengelolaan inventory Golden Net.
+                Akses seluruh fitur pengelolaan inventory Fiandra Net.
               </Typography>
             </Box>
 

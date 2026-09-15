@@ -331,7 +331,7 @@ export default function DashboardContent({ user, statistics }: Props) {
               mb: 0.5,
             }}
           >
-            GOLDEN NET / CUSTOMER MANAGEMENT
+            FIANDRA NET / CUSTOMER MANAGEMENT
           </Typography>
 
           <Typography
@@ -356,7 +356,7 @@ export default function DashboardContent({ user, statistics }: Props) {
               fontSize: 13,
             }}
           >
-            Monitoring & management Golden Net
+            Monitoring & management Fiandra Net
           </Typography>
         </Box>
 
@@ -451,7 +451,7 @@ export default function DashboardContent({ user, statistics }: Props) {
                   mb: 1,
                 }}
               >
-                GOLDEN NET CONTROL CENTER
+                FIANDRA NET CONTROL CENTER
               </Typography>
 
               <Typography
@@ -477,7 +477,7 @@ export default function DashboardContent({ user, statistics }: Props) {
                   lineHeight: 1.7,
                 }}
               >
-                Pantau kondisi operasional ISP dan kelola seluruh data Golden
+                Pantau kondisi operasional ISP dan kelola seluruh data Fiandra
                 Net dari satu tempat.
               </Typography>
             </Box>
@@ -745,7 +745,7 @@ export default function DashboardContent({ user, statistics }: Props) {
           pb: 1,
         }}
       >
-        Golden Net ISP Management System
+        Fiandra Net ISP Management System
       </Typography>
     </Box>
   );

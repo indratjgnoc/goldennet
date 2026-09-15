@@ -567,7 +567,7 @@ export default function CustomersContent({
                 mb: 0.5,
               }}
             >
-              GOLDEN NET / CUSTOMER MANAGEMENT
+              FIANDRA NET / CUSTOMER MANAGEMENT
             </Typography>
 
             <Typography
@@ -588,7 +588,7 @@ export default function CustomersContent({
               }}
             >
               Kelola data pelanggan, status layanan, dan informasi jaringan
-              pelanggan Golden Net.
+              pelanggan Fiandra Net.
             </Typography>
           </Box>
 
@@ -1016,7 +1016,7 @@ export default function CustomersContent({
             >
               {editingCustomer
                 ? `Mengubah data ${editingCustomer.customerCode}`
-                : "Tambahkan pelanggan baru ke sistem Golden Net"}
+                : "Tambahkan pelanggan baru ke sistem Fiandra Net"}
             </Typography>
           </Box>
 
