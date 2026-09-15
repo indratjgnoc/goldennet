@@ -218,13 +218,13 @@ export default function StockInPage() {
       setLoadingFormData(true);
 
       const [supplierResponse, itemResponse] = await Promise.all([
-        fetch("/api/inventory/suppliers?status=ACTIVE", {
+        fetch("/api/inventory/suppliers?status=active", {
           method: "GET",
           credentials: "include",
           cache: "no-store",
         }),
 
-        fetch("/api/inventory/items?status=ACTIVE&limit=100", {
+        fetch("/api/inventory/items?status=active&limit=100", {
           method: "GET",
           credentials: "include",
           cache: "no-store",
@@ -235,13 +235,13 @@ export default function StockInPage() {
 
       const itemResult = await itemResponse.json();
 
-      if (!supplierResponse.ok || !supplierResult.success) {
+      if (!supplierResponse.ok) {
         throw new Error(
           supplierResult.message || "Gagal mengambil data supplier.",
         );
       }
 
-      if (!itemResponse.ok || !itemResult.success) {
+      if (!itemResponse.ok) {
         throw new Error(itemResult.message || "Gagal mengambil data barang.");
       }
 
@@ -1536,6 +1536,7 @@ export default function StockInPage() {
           <>
             <DialogTitle>
               <Typography
+                component="span"
                 variant="h6"
                 sx={{
                   fontWeight: 800,

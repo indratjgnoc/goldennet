@@ -189,13 +189,6 @@ const STATUS_CONFIG: Record<
   },
 };
 
-const ROLE_CAN_MANAGE: UserRole[] = [
-  'SUPER_ADMIN',
-  'ADMIN',
-  'CUSTOMER_SERVICE',
-  'TEKNISI',
-];
-
 function formatDate(value: string) {
   return new Intl.DateTimeFormat(
     'id-ID',

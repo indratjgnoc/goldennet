@@ -6,7 +6,6 @@ import {
   CheckCircle,
   Close,
   Edit,
-  ExpandMore,
   PauseCircle,
   Search,
   StopCircle,
@@ -38,7 +37,7 @@ import {
   Typography,
 } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type SubscriptionStatus =
   | 'PENDING'
@@ -213,7 +212,7 @@ export default function SubscriptionContent() {
     severity: 'success' as 'success' | 'error',
   });
 
-  const showMessage = (
+  const showMessage = useCallback((
     message: string,
     severity: 'success' | 'error' = 'success',
   ) => {
@@ -222,9 +221,9 @@ export default function SubscriptionContent() {
       message,
       severity,
     });
-  };
+  }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -275,7 +274,7 @@ export default function SubscriptionContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showMessage]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -285,7 +284,7 @@ export default function SubscriptionContent() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [loadData]);
 
   const filteredSubscriptions = useMemo(() => {
     const keyword = search.trim().toLowerCase();
