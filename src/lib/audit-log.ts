@@ -8,6 +8,7 @@ type AuditLogInput = {
   description?: string | null;
   ipAddress?: string | null;
   userAgent?: string | null;
+  details?: Record<string, unknown>;
 };
 
 export async function createAuditLog(

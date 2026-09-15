@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Business,
@@ -12,18 +12,13 @@ import {
   Wifi,
   Close,
   Subscriptions,
-} from '@mui/icons-material';
+  LocationOn,
+} from "@mui/icons-material";
 
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 type ConsoleUser = {
   id: number;
@@ -39,63 +34,68 @@ type Props = {
 
 const menuItems = [
   {
-    label: 'Dashboard',
-    href: '/gnet-console/dashboard',
+    label: "Dashboard",
+    href: "/gnet-console/dashboard",
     icon: <DashboardRounded />,
   },
   {
-    label: 'Users',
-    href: '/gnet-console/users',
+    label: "Users",
+    href: "/gnet-console/users",
     icon: <People />,
   },
   {
-    label: 'Pelanggan',
-    href: '/gnet-console/customers',
+    label: "Pelanggan",
+    href: "/gnet-console/customers",
     icon: <People />,
   },
   {
-    label: 'Pendaftaran',
-    href: '/gnet-console/registrations',
+    label: "Pendaftaran",
+    href: "/gnet-console/registrations",
     icon: <PersonAdd />,
   },
   {
-    label: 'Paket Internet',
-    href: '/gnet-console/packages',
+    label: "Paket Internet",
+    href: "/gnet-console/packages",
     icon: <Wifi />,
   },
   {
-    label: 'Subscription',
-    href: '/gnet-console/subscriptions',
+    label: "Subscription",
+    href: "/gnet-console/subscriptions",
     icon: <Subscriptions />,
   },
   {
-    label: 'Cabang',
-    href: '/gnet-console/branches',
+    label: "Cabang",
+    href: "/gnet-console/branches",
     icon: <Business />,
   },
   {
-    label: 'Inventory',
-    href: '/gnet-console/inventory',
+    label: 'Coverage Area',
+    href: '/gnet-console/coverage',
+    icon: <LocationOn />,
+  },
+  {
+    label: "Inventory",
+    href: "/gnet-console/inventory",
     icon: <Inventory2 />,
   },
 ];
 
 function getRoleLabel(role: string) {
   switch (role) {
-    case 'SUPER_ADMIN':
-      return 'Super Admin';
+    case "SUPER_ADMIN":
+      return "Super Admin";
 
-    case 'ADMIN':
-      return 'Administrator';
+    case "ADMIN":
+      return "Administrator";
 
-    case 'TEKNISI':
-      return 'Teknisi';
+    case "TEKNISI":
+      return "Teknisi";
 
-    case 'CUSTOMER_SERVICE':
-      return 'Customer Service';
+    case "CUSTOMER_SERVICE":
+      return "Customer Service";
 
-    case 'FINANCE':
-      return 'Finance';
+    case "FINANCE":
+      return "Finance";
 
     default:
       return role;
@@ -110,11 +110,11 @@ export default function ConsoleShell({ user, children }: Props) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
+      await fetch("/api/auth/logout", {
+        method: "POST",
       });
     } finally {
-      router.push('/gnet-console/login');
+      router.push("/gnet-console/login");
       router.refresh();
     }
   };
@@ -125,21 +125,20 @@ export default function ConsoleShell({ user, children }: Props) {
     <Box
       sx={{
         width: sidebarWidth,
-        height: '100vh',
-        position: 'fixed',
+        height: "100vh",
+        position: "fixed",
         left: 0,
         top: 0,
         zIndex: 1200,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
 
         background:
-          'linear-gradient(180deg, rgba(2,6,23,0.99) 0%, rgba(4,12,25,0.99) 100%)',
+          "linear-gradient(180deg, rgba(2,6,23,0.99) 0%, rgba(4,12,25,0.99) 100%)",
 
-        borderRight: '1px solid rgba(255,255,255,0.07)',
+        borderRight: "1px solid rgba(255,255,255,0.07)",
 
-        boxShadow:
-          '15px 0 50px rgba(0,0,0,0.25)',
+        boxShadow: "15px 0 50px rgba(0,0,0,0.25)",
       }}
     >
       {/* BRAND */}
@@ -147,10 +146,10 @@ export default function ConsoleShell({ user, children }: Props) {
         sx={{
           height: 78,
           px: 3,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
         <Box>
@@ -159,14 +158,14 @@ export default function ConsoleShell({ user, children }: Props) {
               fontSize: 20,
               fontWeight: 900,
               letterSpacing: 2,
-              color: '#fff',
+              color: "#fff",
             }}
           >
             GOLDEN
             <Box
               component="span"
               sx={{
-                color: '#00e676',
+                color: "#00e676",
                 ml: 0.7,
               }}
             >
@@ -180,8 +179,8 @@ export default function ConsoleShell({ user, children }: Props) {
               fontSize: 9,
               fontWeight: 700,
               letterSpacing: 2,
-              color: 'rgba(255,255,255,0.35)',
-              textTransform: 'uppercase',
+              color: "rgba(255,255,255,0.35)",
+              textTransform: "uppercase",
             }}
           >
             Operations Console
@@ -192,10 +191,10 @@ export default function ConsoleShell({ user, children }: Props) {
           onClick={() => setMobileOpen(false)}
           sx={{
             display: {
-              xs: 'flex',
-              md: 'none',
+              xs: "flex",
+              md: "none",
             },
-            color: 'rgba(255,255,255,0.7)',
+            color: "rgba(255,255,255,0.7)",
           }}
         >
           <Close />
@@ -210,18 +209,18 @@ export default function ConsoleShell({ user, children }: Props) {
           p: 1.7,
           borderRadius: 3,
           background:
-            'linear-gradient(145deg, rgba(15,23,42,0.95), rgba(2,6,23,0.95))',
-          border: '1px solid rgba(255,255,255,0.06)',
+            "linear-gradient(145deg, rgba(15,23,42,0.95), rgba(2,6,23,0.95))",
+          border: "1px solid rgba(255,255,255,0.06)",
         }}
       >
         <Typography
           sx={{
-            color: '#fff',
+            color: "#fff",
             fontSize: 14,
             fontWeight: 800,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {user.name}
@@ -230,7 +229,7 @@ export default function ConsoleShell({ user, children }: Props) {
         <Typography
           sx={{
             mt: 0.3,
-            color: '#00e676',
+            color: "#00e676",
             fontSize: 11,
             fontWeight: 700,
           }}
@@ -245,7 +244,7 @@ export default function ConsoleShell({ user, children }: Props) {
           flex: 1,
           px: 1.5,
           py: 2,
-          overflowY: 'auto',
+          overflowY: "auto",
         }}
       >
         <Typography
@@ -255,8 +254,8 @@ export default function ConsoleShell({ user, children }: Props) {
             fontSize: 10,
             fontWeight: 800,
             letterSpacing: 1.5,
-            color: 'rgba(255,255,255,0.3)',
-            textTransform: 'uppercase',
+            color: "rgba(255,255,255,0.3)",
+            textTransform: "uppercase",
           }}
         >
           Main Menu
@@ -265,7 +264,7 @@ export default function ConsoleShell({ user, children }: Props) {
         {menuItems.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href !== '/gnet-console/dashboard' &&
+            (item.href !== "/gnet-console/dashboard" &&
               pathname.startsWith(`${item.href}/`));
 
           return (
@@ -276,9 +275,9 @@ export default function ConsoleShell({ user, children }: Props) {
                 setMobileOpen(false);
               }}
               sx={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
                 gap: 1.5,
 
                 px: 1.7,
@@ -287,46 +286,42 @@ export default function ConsoleShell({ user, children }: Props) {
 
                 borderRadius: 2,
 
-                cursor: 'pointer',
+                cursor: "pointer",
 
-                color: active
-                  ? '#00e676'
-                  : 'rgba(255,255,255,0.62)',
+                color: active ? "#00e676" : "rgba(255,255,255,0.62)",
 
                 background: active
-                  ? 'linear-gradient(90deg, rgba(0,230,118,0.14), rgba(0,230,118,0.04))'
-                  : 'transparent',
+                  ? "linear-gradient(90deg, rgba(0,230,118,0.14), rgba(0,230,118,0.04))"
+                  : "transparent",
 
-                transition: 'all .2s ease',
+                transition: "all .2s ease",
 
-                '&:hover': {
-                  color: '#00e676',
-                  background:
-                    'rgba(0,230,118,0.08)',
-                  transform: 'translateX(2px)',
+                "&:hover": {
+                  color: "#00e676",
+                  background: "rgba(0,230,118,0.08)",
+                  transform: "translateX(2px)",
                 },
 
-                '&::before': active
+                "&::before": active
                   ? {
                       content: '""',
-                      position: 'absolute',
+                      position: "absolute",
                       left: 0,
-                      top: '20%',
-                      height: '60%',
+                      top: "20%",
+                      height: "60%",
                       width: 3,
                       borderRadius: 5,
-                      background: '#00e676',
-                      boxShadow:
-                        '0 0 12px rgba(0,230,118,0.8)',
+                      background: "#00e676",
+                      boxShadow: "0 0 12px rgba(0,230,118,0.8)",
                     }
                   : {},
               }}
             >
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  '& svg': {
+                  display: "flex",
+                  alignItems: "center",
+                  "& svg": {
                     fontSize: 21,
                   },
                 }}
@@ -349,7 +344,7 @@ export default function ConsoleShell({ user, children }: Props) {
         <Divider
           sx={{
             my: 2,
-            borderColor: 'rgba(255,255,255,0.06)',
+            borderColor: "rgba(255,255,255,0.06)",
           }}
         />
 
@@ -360,8 +355,8 @@ export default function ConsoleShell({ user, children }: Props) {
             fontSize: 10,
             fontWeight: 800,
             letterSpacing: 1.5,
-            color: 'rgba(255,255,255,0.3)',
-            textTransform: 'uppercase',
+            color: "rgba(255,255,255,0.3)",
+            textTransform: "uppercase",
           }}
         >
           System
@@ -369,22 +364,22 @@ export default function ConsoleShell({ user, children }: Props) {
 
         <Box
           onClick={() => {
-            router.push('/gnet-console/settings');
+            router.push("/gnet-console/settings");
             setMobileOpen(false);
           }}
           sx={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: 1.5,
             px: 1.7,
             py: 1.35,
             borderRadius: 2,
-            cursor: 'pointer',
-            color: 'rgba(255,255,255,0.62)',
+            cursor: "pointer",
+            color: "rgba(255,255,255,0.62)",
 
-            '&:hover': {
-              color: '#00e676',
-              background: 'rgba(0,230,118,0.08)',
+            "&:hover": {
+              color: "#00e676",
+              background: "rgba(0,230,118,0.08)",
             },
           }}
         >
@@ -405,7 +400,7 @@ export default function ConsoleShell({ user, children }: Props) {
       <Box
         sx={{
           p: 2,
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: "1px solid rgba(255,255,255,0.06)",
         }}
       >
         <Button
@@ -413,19 +408,19 @@ export default function ConsoleShell({ user, children }: Props) {
           startIcon={<LogoutRounded />}
           onClick={handleLogout}
           sx={{
-            justifyContent: 'flex-start',
+            justifyContent: "flex-start",
             px: 1.7,
             py: 1.25,
             borderRadius: 2,
 
-            color: 'rgba(255,255,255,0.55)',
+            color: "rgba(255,255,255,0.55)",
 
-            textTransform: 'none',
+            textTransform: "none",
             fontWeight: 700,
 
-            '&:hover': {
-              color: '#ff6b6b',
-              background: 'rgba(255,80,80,0.08)',
+            "&:hover": {
+              color: "#ff6b6b",
+              background: "rgba(255,80,80,0.08)",
             },
           }}
         >
@@ -438,18 +433,18 @@ export default function ConsoleShell({ user, children }: Props) {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: "100vh",
         background:
-          'radial-gradient(circle at top right, rgba(0,230,118,0.09), transparent 28%), #020617',
-        color: '#fff',
+          "radial-gradient(circle at top right, rgba(0,230,118,0.09), transparent 28%), #020617",
+        color: "#fff",
       }}
     >
       {/* DESKTOP SIDEBAR */}
       <Box
         sx={{
           display: {
-            xs: 'none',
-            md: 'block',
+            xs: "none",
+            md: "block",
           },
         }}
       >
@@ -460,22 +455,22 @@ export default function ConsoleShell({ user, children }: Props) {
       <IconButton
         onClick={() => setMobileOpen(true)}
         sx={{
-          position: 'fixed',
+          position: "fixed",
           top: 16,
           left: 16,
           zIndex: 1100,
 
           display: {
-            xs: 'flex',
-            md: 'none',
+            xs: "flex",
+            md: "none",
           },
 
-          color: '#00e676',
-          background: 'rgba(2,6,23,0.9)',
-          border: '1px solid rgba(0,230,118,0.2)',
+          color: "#00e676",
+          background: "rgba(2,6,23,0.9)",
+          border: "1px solid rgba(0,230,118,0.2)",
 
-          '&:hover': {
-            background: 'rgba(0,230,118,0.1)',
+          "&:hover": {
+            background: "rgba(0,230,118,0.1)",
           },
         }}
       >
@@ -488,19 +483,19 @@ export default function ConsoleShell({ user, children }: Props) {
           <Box
             onClick={() => setMobileOpen(false)}
             sx={{
-              position: 'fixed',
+              position: "fixed",
               inset: 0,
               zIndex: 1190,
-              background: 'rgba(0,0,0,0.65)',
-              backdropFilter: 'blur(4px)',
+              background: "rgba(0,0,0,0.65)",
+              backdropFilter: "blur(4px)",
             }}
           />
 
           <Box
             sx={{
               display: {
-                xs: 'block',
-                md: 'none',
+                xs: "block",
+                md: "none",
               },
             }}
           >
@@ -513,7 +508,7 @@ export default function ConsoleShell({ user, children }: Props) {
       <Box
         component="main"
         sx={{
-          minHeight: '100vh',
+          minHeight: "100vh",
 
           ml: {
             xs: 0,
@@ -521,11 +516,11 @@ export default function ConsoleShell({ user, children }: Props) {
           },
 
           width: {
-            xs: '100%',
+            xs: "100%",
             md: `calc(100% - ${sidebarWidth}px)`,
           },
 
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
         }}
       >
         {children}
