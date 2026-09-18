@@ -345,6 +345,17 @@ model InstallationItem {
   @@map("installation_items")
 }
 
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@map("system_settings")
+}
+
 enum InventoryUnit {
   PCS
   UNIT
