@@ -57,6 +57,7 @@ model Customer {
   registrations Registration[]
   subscriptions Subscription[]
   installations Installation[]
+  workOrders    WorkOrder[]
 
   @@index([phone])
   @@index([email])
@@ -143,6 +144,7 @@ model User {
   stockOutsIssued     StockOut[]     @relation("StockOutIssuedBy")
   stockOutsTechnician StockOut[]     @relation("StockOutTechnician")
   installations       Installation[]
+  workOrders          WorkOrder[]
 
   @@index([role])
   @@index([status])
@@ -227,10 +229,11 @@ model InventoryItem {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  category          InventoryCategory  @relation(fields: [categoryId], references: [id])
-  stockInItems      StockInItem[]
-  stockOutItems     StockOutItem[]
-  installationItems InstallationItem[]
+  category           InventoryCategory   @relation(fields: [categoryId], references: [id])
+  stockInItems       StockInItem[]
+  stockOutItems      StockOutItem[]
+  installationItems  InstallationItem[]
+  workOrderMaterials WorkOrderMaterial[]
 
   @@index([categoryId])
   @@index([name])
@@ -323,6 +326,7 @@ model Installation {
   customer   Customer           @relation(fields: [customerId], references: [id])
   technician User               @relation(fields: [technicianId], references: [id])
   items      InstallationItem[]
+  workOrders WorkOrder[]
 
   @@index([customerId])
   @@index([technicianId])
@@ -343,6 +347,60 @@ model InstallationItem {
   @@index([installationId])
   @@index([itemId])
   @@map("installation_items")
+}
+
+model WorkOrder {
+  id             Int    @id @default(autoincrement())
+  workOrderCode  String @unique
+  customerId     Int
+  technicianId   Int?
+  installationId Int?
+
+  type     WorkOrderType     @default(INSTALLATION)
+  status   WorkOrderStatus   @default(OPEN)
+  priority WorkOrderPriority @default(NORMAL)
+
+  title       String
+  description String? @db.Text
+
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  technicianNotes String? @db.Text
+  completionNotes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer     Customer            @relation(fields: [customerId], references: [id])
+  technician   User?               @relation(fields: [technicianId], references: [id])
+  installation Installation?       @relation(fields: [installationId], references: [id])
+  materials    WorkOrderMaterial[]
+
+  @@index([customerId])
+  @@index([technicianId])
+  @@index([installationId])
+  @@index([status])
+  @@index([priority])
+  @@index([type])
+  @@index([scheduledAt])
+  @@map("work_orders")
+}
+
+model WorkOrderMaterial {
+  id          Int     @id @default(autoincrement())
+  workOrderId Int
+  itemId      Int
+  quantity    Decimal @db.Decimal(12, 2)
+  notes       String? @db.Text
+
+  workOrder WorkOrder     @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  item      InventoryItem @relation(fields: [itemId], references: [id])
+
+  @@index([workOrderId])
+  @@index([itemId])
+  @@map("work_order_materials")
 }
 
 model SystemSetting {
@@ -402,4 +460,29 @@ enum SubscriptionStatus {
   ACTIVE
   SUSPENDED
   TERMINATED
+}
+
+enum WorkOrderType {
+  INSTALLATION
+  TROUBLESHOOTING
+  REPAIR
+  MAINTENANCE
+  UPGRADE
+  DOWNGRADE
+}
+
+enum WorkOrderStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum WorkOrderPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }
